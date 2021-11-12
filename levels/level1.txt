@@ -1,0 +1,50 @@
+SSSSSSSSSSSSSSSSSSSSSSSEEEESSSSSSSSSSSSSSSSSSSSSSS
+S                       N                        S
+S WWWWWWW                                WWWWWWW S
+S W     W                                W     W S
+S W     W      SS                SS      W     W S
+S W            SS                SS            W S
+S W                 SS      SS                 W S
+S WWWWWWW           SS      SS           WWWWWWW S
+S                                                S
+S                                                S
+S                                                S
+S      WWWWWWWWWWWWWWW      WWWWWWWWWWWWWWW      S
+S      W                                  W      S
+S      W                                  W      S
+S      W   WWWW   WWWWWWWWWWWWWW   WWWW   W      S
+S      W   W                          W   W      S
+S      W   W          WWWWWW          W   W      S
+S      W   W                          W   W      S
+S          W     WWWWWWWWWWWWWWWW     W          S
+S          W     W              W     W          S
+S          W     W              W     W          S
+S      W   W     WWWWWW    WWWWWW     W   W      S
+S      W   W                   4      W   W      S
+S      W   W                          W   W      S
+S      W   WWWW   WWWWWWWWWWWWWW   WWWW   W      S
+S      W                                  W      S
+S      W                                  W      S
+S      WWWWWWWWWWWWWWW      WWWWWWWWWWWWWWW      S
+S                   SS      SS                   S
+S                   SS      SS                   S
+S      SS         SSSS      SSSS         SS      S
+S      SS                                SS      S
+S                                                S
+SS                   S     3S                   SS
+S   WWWWWWWWWWW      S      S                    S
+S                                                S
+S   WWWWWW  WWW                                  S
+S   W         W                                  S
+S   W  5 W    W                                  S
+S        W              1                        S
+S   WWWWWWWWWWW                                  S
+S                                    WWWWWWWWWWW S
+S SSSSS  2                           W         W S
+S     SSSS                       SS  W  W      W S
+SSSSS    S                              WWWW   W S
+S   SSSS S                       SS  W  W      W S
+S S      S                           W         W S
+S SSSSSSSS              6            WWWWWWWWWWW S
+S                                                S
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS

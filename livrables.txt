@@ -1,0 +1,25 @@
+LIVRABLES 1
+ L1.01 - Choisir une couleur plus visible (et qui n'est pas trop proche de celle des pierres et personnages) pour les murs
+ L1.02 - Refactoriser NinjaVSSamourais.__draw_ninja()
+ L1.03 - Refactoriser NinjaVSSamourais.__draw_samourais()
+ L1.04 - Refactoriser Samourai.get_viewing_region()
+ L1.05 - Convertir les valeurs numériques (ex.: 50x50) en constantes
+ L1.06 - Éliminer le chaînage de méthodes dans ninja_vs_samourais_window.build_gui_from_game_level
+ L1.07 - Simplifier Tile.create_from_symbol en inversant le dictionnaire TYPES_AND_SYMBOL et en ajoutant un booléen pour walkable
+
+LIVRABLES 2
+ L2.01 - Empêcher les samouraïs d'éclairer à travers les murs
+ L2.02 - Terminer le programme, serveur et client, correctement (threads bloqués sur le socket)
+ L2.03 - Valider les fichiers de niveau (même largeur de ligne, caractères valides, etc.)
+ L2.04 - Valider le format des messages reçus (taille minimale, champs valeurs numériques, etc.). Ne pas traiter les messages incorrects, mais afficher une erreur à la console.
+ L2.05 - Détruire la fenêtre arcade sur CTRL-C, pour l'application client
+ L2.06 - Ajouter les points de vie (10) pour le ninja et pour les samouraïs
+ L2.07 - N'afficher que les samouraïs qui sont présents
+
+LIVRABLES 3
+ L3.01 - Dans les écrans des samouraïs, le ninja fait toujours face au sud. Et vice-versa. À corriger
+ L3.02 - Les sessions ID dépendent des connexions au serveur. Il faut donc repartir le serveur à chaque partie pour éviter les problèmes.
+ L3.03 - Si le ninja se déplace avant qu'un samouraï ne rejoigne la partie, sa nouvelle position reste inconnue du côté du samouraï si le ninja arrête de bouger avant que le samouraï arrive dans le jeu. Corriger cette situation.
+ L3.04 - Ajouter les coups de katanas et leur impact (-2) sur les points de vie du ninja
+ L3.05 - Ajouter les lancers de shurikens et leur impact (-1) sur les points de vie des samouraïs
+ L3.06 - Gérer la fin de partie (le ninja ou le dernier samouraï meurt, le ninja quitte)
