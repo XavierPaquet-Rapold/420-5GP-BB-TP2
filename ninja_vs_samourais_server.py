@@ -19,7 +19,8 @@ if __name__ == '__main__':
 
     server = GameServer()
     server.start()
-    print(f'Game server started at {server.get_ip()} on port {server.get_port()}')
+    print(
+        f'Game server started at {server.get_ip()} on port {server.get_port()}')
 
     try:
         main(server)

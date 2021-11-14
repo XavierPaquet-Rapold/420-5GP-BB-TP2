@@ -3,6 +3,7 @@ from level import Level
 
 class Player:
     """Représente la base d'un personnage du jeu (ce qui est commun au ninja et aux samouraïs)."""
+
     def __init__(self, x, y: int) -> None:
         self.position = (x, y)
 
@@ -10,9 +11,11 @@ class Player:
         self.__facing_north = self.__facing_east = self.__facing_west = False
 
     def __move(self, level: Level, delta_x, delta_y: int) -> bool:
-        tile = level.get_tile(self.position[0] + delta_x, self.position[1] + delta_y)
+        tile = level.get_tile(
+            self.position[0] + delta_x, self.position[1] + delta_y)
         if tile.walkable:
-            self.position = (self.position[0] + delta_x, self.position[1] + delta_y)
+            self.position = (self.position[0] +
+                             delta_x, self.position[1] + delta_y)
             return True
         return False
 
@@ -79,6 +82,7 @@ class Player:
 
 class Ninja(Player):
     """Représente les spécificités du personnage ninja (éventuellement)."""
+
     def __init__(self, x, y: int) -> None:
         super().__init__(x, y)
 
@@ -93,37 +97,34 @@ class Samourai(Player):
               (153, 0, 255)]    # samourai 6
 
     __VIEWING_REGION_DELTAS = [(-1, -4), (0, -4), (1, -4),
-                               (-3, -3), (-2, -3), (-1, -3), (0, -3), (1, -3), (2, -3), (3, -3),
-                               (-3, -2), (-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2), (3, -2),
-                               (-4, -1), (-3, -1), (-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1), (3, -1), (4, -1),
-                               (-4, 0), (-3, 0), (-2, 0), (-1, 0), (1, 0), (2, 0), (3, 0), (4, 0),
-                               (-4, 1), (-3, 1), (-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1), (3, 1), (4, 1),
-                               (-3, 2), (-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2), (3, 2),
-                               (-3, 3), (-2, 3), (-1, 3), (0, 3), (1, 3), (2, 3), (3, 3),
+                               (-3, -3), (-2, -3), (-1, -3), (0, -
+                                                              3), (1, -3), (2, -3), (3, -3),
+                               (-3, -2), (-2, -2), (-1, -2), (0, -
+                                                              2), (1, -2), (2, -2), (3, -2),
+                               (-4, -1), (-3, -1), (-2, -1), (-1, -1), (0, -
+                                                                        1), (1, -1), (2, -1), (3, -1), (4, -1),
+                               (-4, 0), (-3, 0), (-2, 0), (-1,
+                                                           0), (1, 0), (2, 0), (3, 0), (4, 0),
+                               (-4, 1), (-3, 1), (-2, 1), (-1, 1), (0,
+                                                                    1), (1, 1), (2, 1), (3, 1), (4, 1),
+                               (-3, 2), (-2, 2), (-1, 2), (0,
+                                                           2), (1, 2), (2, 2), (3, 2),
+                               (-3, 3), (-2, 3), (-1, 3), (0,
+                                                           3), (1, 3), (2, 3), (3, 3),
                                (-1, 4), (0, 4), (1, 4)]
 
     def __init__(self, x, y: int) -> None:
         super().__init__(x, y)
-
-    @staticmethod
-    def check_viewing_region_tile(x, y, width, height: int) -> tuple or None:
-        """
-            Vérifie si une coordonnée du champ de vision correspond à une tuile.
-            Retourne la coordonnées si c'est le cas. Retourne None sinon.
-        """
-        if (0 <= x <= width - 1) and (0 <= y <= height - 1):
-            return x, y
-        else:
-            return None
 
     def get_viewing_region(self, width, height: int) -> list:
         """Retourne le champ de vision du samouraï."""
         tiles = []
 
         for delta in self.__VIEWING_REGION_DELTAS:
-            pos = Samourai.check_viewing_region_tile(self.position[0] + delta[0], self.position[1] + delta[1],
-                                                     width, height)
-            if pos:
-                tiles.append(pos)
+            x = self.position[0] + delta[0]
+            y = self.position[1] + delta[1]
+
+            if (0 <= x <= width - 1) and (0 <= y <= height - 1):
+                tiles.append((x, y))
 
         return tiles
