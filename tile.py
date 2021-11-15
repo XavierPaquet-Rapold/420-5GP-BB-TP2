@@ -23,28 +23,17 @@ class Tile:
                         TileType.WALL: (84, 62, 0),
                         TileType.EXIT: (64, 64, 64)}
 
-    # TYPES_AND_SYMBOLS = {' ': {TileType : TileType.GROUND, 'walkable': True},
-    #                      'S': {TileType : TileType.STONE, 'walkable' : False},
-    #                      'W': {TileType: TileType.WALL, 'walkable' :False},
-    #                      'N': {TileType: TileType.NINJA_START_POS, 'walkable' :True},
-    #                      '1': {TileType: TileType.SAMOURAI_START_POS_1, 'walkable' :True},
-    #                      '2': {TileType: TileType.SAMOURAI_START_POS_2, 'walkable' :True},
-    #                      '3': {TileType: TileType.SAMOURAI_START_POS_3, 'walkable' :True},
-    #                      '4': {TileType: TileType.SAMOURAI_START_POS_4, 'walkable' :True},
-    #                      '5': {TileType: TileType.SAMOURAI_START_POS_5, 'walkable' :True},
-    #                      '6': {TileType: TileType.SAMOURAI_START_POS_6, 'walkable' :True},
-    #                      'E': {TileType: TileType.EXIT, 'walkable': True}}
-    TYPES_AND_SYMBOLS = {' ': TileType.GROUND,
-                         'S': TileType.STONE,
-                         'W': TileType.WALL,
-                         'N': TileType.NINJA_START_POS,
-                         '1': TileType.SAMOURAI_START_POS_1,
-                         '2': TileType.SAMOURAI_START_POS_2,
-                         '3': TileType.SAMOURAI_START_POS_3, 
-                         '4': TileType.SAMOURAI_START_POS_4, 
-                         '5': TileType.SAMOURAI_START_POS_5,
-                         '6': TileType.SAMOURAI_START_POS_6,
-                         'E': TileType.EXIT}
+    TYPES_AND_SYMBOLS = {' ': [TileType.GROUND, True],
+                         'S': [TileType.STONE, False],
+                         'W': [TileType.WALL, False],
+                         'N': [TileType.NINJA_START_POS, True],
+                         '1': [TileType.SAMOURAI_START_POS_1, True],
+                         '2': [TileType.SAMOURAI_START_POS_2,True],
+                         '3': [TileType.SAMOURAI_START_POS_3,True], 
+                         '4': [TileType.SAMOURAI_START_POS_4,True], 
+                         '5': [TileType.SAMOURAI_START_POS_5,True],
+                         '6': [TileType.SAMOURAI_START_POS_6,True],
+                         'E': [TileType.EXIT,True]}
 
 
     def __init__(self, walkable: bool = True, tile_type: TileType = TileType.GROUND) -> None:
@@ -52,52 +41,46 @@ class Tile:
         self.__tile_type = tile_type
 
     def __str__(self) -> str:
-        #return self.TYPES_AND_SYMBOLS[self.__tile_type]
-        return str(list(self.TYPES_AND_SYMBOLS.keys())[list(self.TYPES_AND_SYMBOLS.values()).index(self.__tile_type)])
+        #return self.TYPES_AND_SYMBOLS[self.__tile_type] à enlever
+        value_type = self.__tile_type
+        value = self.__tile_type
+        key_value = [key for key, value_type in self.TYPES_AND_SYMBOLS.items()
+                        if value in value_type]
+        return ''.join(key_value)
 
     @staticmethod
     def create_from_symbol(symbol: str):
         """Crée et configure une tuile en fonction du symbole."""
         if symbol == 'S':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['S'][TileType],
-            #  walkable=Tile.TYPES_AND_SYMBOLS['S']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['S'], walkable=False)
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['S'][0],
+             walkable=Tile.TYPES_AND_SYMBOLS['S'][1])
         elif symbol == 'W':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['W'][TileType], 
-            # walkable=Tile.TYPES_AND_SYMBOLS['W']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['W'], walkable=False)
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['W'][0], 
+            walkable=Tile.TYPES_AND_SYMBOLS['W'][1])
         elif symbol == 'N':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['N'][TileType], 
-            # walkable=Tile.TYPES_AND_SYMBOLS['N']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['N'])
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['N'][0], 
+            walkable=Tile.TYPES_AND_SYMBOLS['N'][1])
         elif symbol == '1':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['1'][TileType], 
-            # walkable=Tile.TYPES_AND_SYMBOLS['1']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['1'])
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['1'][0], 
+            walkable=Tile.TYPES_AND_SYMBOLS['1'][1])
         elif symbol == '2':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['2'][TileType], 
-            # walkable=Tile.TYPES_AND_SYMBOLS['2']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['2'])
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['2'][0], 
+            walkable=Tile.TYPES_AND_SYMBOLS['2'][1])
         elif symbol == '3':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['3'][TileType], 
-            # walkable=Tile.TYPES_AND_SYMBOLS['3']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['3'])
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['3'][0], 
+            walkable=Tile.TYPES_AND_SYMBOLS['3'][1])
         elif symbol == '4':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['4'][TileType], 
-            # walkable=Tile.TYPES_AND_SYMBOLS['4']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['4'])
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['4'][0], 
+            walkable=Tile.TYPES_AND_SYMBOLS['4'][1])
         elif symbol == '5':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['5'][TileType], 
-            # walkable=Tile.TYPES_AND_SYMBOLS['5']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['5'])
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['5'][0], 
+            walkable=Tile.TYPES_AND_SYMBOLS['5'][1])
         elif symbol == '6':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['6'][TileType], 
-            # walkable=Tile.TYPES_AND_SYMBOLS['6']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['6'])
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['6'][0], 
+            walkable=Tile.TYPES_AND_SYMBOLS['6'][1])
         elif symbol == 'E':
-            # return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['E'][TileType], 
-            # walkable=Tile.TYPES_AND_SYMBOLS['E']['walkable'])
-            return Tile(tile_type=Tile.TYPES_AND_SYMBOLS['E'])
+            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['E'][0], 
+            walkable=Tile.TYPES_AND_SYMBOLS['E'][1])
         else:
             return Tile()
 
