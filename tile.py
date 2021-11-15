@@ -42,10 +42,9 @@ class Tile:
 
     def __str__(self) -> str:
         #return self.TYPES_AND_SYMBOLS[self.__tile_type] à enlever
-        value_type = self.__tile_type
         value = self.__tile_type
-        key_value = [key for key, value_type in self.TYPES_AND_SYMBOLS.items()
-                        if value in value_type]
+        key_value = [key for key, self.__tile_type in self.TYPES_AND_SYMBOLS.items()
+                        if value in self.__tile_type] 
         return ''.join(key_value)
 
     @staticmethod
