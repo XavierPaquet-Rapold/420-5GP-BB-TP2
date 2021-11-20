@@ -4,6 +4,7 @@ from time import sleep
 from game import Game
 from game_server import GameServer
 
+SLEEP_TIME = 0.05
 
 def main(game_server: GameServer) -> None:
     """Programme principal du serveur de Ninja VS Samouraïs."""
@@ -12,7 +13,7 @@ def main(game_server: GameServer) -> None:
 
     while True:
         game_server.handle_messages(game)
-        sleep(0.05)
+        sleep(SLEEP_TIME)
 
 
 if __name__ == '__main__':

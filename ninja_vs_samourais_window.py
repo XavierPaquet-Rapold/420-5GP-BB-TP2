@@ -13,6 +13,8 @@ SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 500
 SCREEN_TITLE = 'Ninja vs Samouraïs'
 MOVING_PACE = 5 / 60
+BLOCK_UNIT = 10
+SAMURAI_VIEW_RANGE_X = SAMURAI_VIEW_RANGE_Y = 50
 
 
 class NinjaVSSamourais(arcade.Window):
@@ -32,9 +34,9 @@ class NinjaVSSamourais(arcade.Window):
         self.__tiles = arcade.ShapeElementList()
 
         self.__time_since_last_move = 0.0
-        self.__moving_east = self.__moving_west = self.__moving_north = self.__moving_south = False
+        self.__moving_east = self.__moving_west = self.__moving_north = self.__moving_south = False  
 
-    def __build_gui_from_game_level(self, __DISTANCE_UNIT = 10) -> None:
+    def __build_gui_from_game_level(self) -> None:
         """Construit la grille visuelle représentant le niveau courant."""
         for y in range(self.__game.level.height):
             for x in range(self.__game.level.width):
@@ -45,12 +47,12 @@ class NinjaVSSamourais(arcade.Window):
                     color = Tile.TYPES_AND_COLORS.get(TileType.GROUND)
 
                 shape = arcade.create_rectangle_filled(
-                    5 + x * __DISTANCE_UNIT, SCREEN_HEIGHT - (5 + y * __DISTANCE_UNIT), 8, 8, color)
+                    5 + x * BLOCK_UNIT, SCREEN_HEIGHT - (5 + y * BLOCK_UNIT), 8, 8, color)
                 self.__tile_shapes.append(shape)
                 self.__tiles.append(shape)
 
     @staticmethod
-    def __draw_ninja(game: Game, __DISTANCE_UNIT = 10) -> None:
+    def __draw_ninja(game: Game) -> None:
         """Dessine le ninja."""
         ninja = game.get_ninja()
         drawing_settings = {
@@ -66,11 +68,11 @@ class NinjaVSSamourais(arcade.Window):
             "bandanna_color": (255, 192, 0)
         }
 
-        arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + ninja.position[0] * __DISTANCE_UNIT,
+        arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + ninja.position[0] * BLOCK_UNIT,
                                      SCREEN_HEIGHT -
                                      (drawing_settings["body_center_y"] +
-                                      ninja.position[1] * __DISTANCE_UNIT),
-                                     drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
+                                      ninja.position[1] * BLOCK_UNIT),
+                                     drawing_settings["body_width"],drawing_settings["body_height"], drawing_settings["body_color"])
 
         if ninja.facing_south:
             drawing_settings.update({
@@ -89,23 +91,22 @@ class NinjaVSSamourais(arcade.Window):
             })
 
         if not ninja.facing_north:
-            arcade.draw_rectangle_filled(drawing_settings["bandanna_center_x"] + ninja.position[0] * __DISTANCE_UNIT,
+            arcade.draw_rectangle_filled(drawing_settings["bandanna_center_x"] + ninja.position[0] * BLOCK_UNIT,
                                          SCREEN_HEIGHT -
                                          (drawing_settings["bandanna_center_y"] +
-                                          ninja.position[1] * __DISTANCE_UNIT),
+                                          ninja.position[1] * BLOCK_UNIT),
                                          drawing_settings["bandanna_width"], drawing_settings["bandanna_height"], drawing_settings["bandanna_color"])
 
     @staticmethod
-    def __draw_samourais(game: Game, __DISTANCE_UNIT : int = 10, __FIRST_SAMURAI_INDEX : int = 1, __LAST_SAMURA_INDEX : int = 7) -> None:
+    def __draw_samourais(game: Game) -> None:
         """Dessine les samouraïs."""
-        for i in range(__FIRST_SAMURAI_INDEX, __LAST_SAMURA_INDEX):
-            samourai = game.get_player(i)
-            drawing_settings = {
+        
+        drawing_settings = {
                 "body_center_x": 5,
                 "body_center_y": 5,
                 "body_width": 8,
                 "body_height": 8,
-                "body_color": Samourai.COLORS[i - 1],
+                "body_color": Samourai.COLORS[(0, 0, 0) - 1],
                 "bandanna_1_center_x": 0,
                 "bandanna_1_center_y": 3,
                 "bandanna_1_width": 0,
@@ -116,11 +117,15 @@ class NinjaVSSamourais(arcade.Window):
                 "bandanna_2_height": 2,
                 "bandanna_color": (0, 0, 0)
             }
-
-            arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + samourai.position[0] * __DISTANCE_UNIT,
+        for i in range(1, 7):
+            drawing_settings.update({
+                "body_color": Samourai.COLORS[i - 1],
+            })
+            samourai = game.get_player(i)
+            arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + samourai.position[0] * BLOCK_UNIT,
                                          SCREEN_HEIGHT -
                                          (drawing_settings["body_center_y"] +
-                                          samourai.position[1] * __DISTANCE_UNIT),
+                                          samourai.position[1] * BLOCK_UNIT),
                                          drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
 
             if samourai.facing_south:
@@ -143,27 +148,27 @@ class NinjaVSSamourais(arcade.Window):
                 })
 
             if not samourai.facing_north:
-                arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + samourai.position[0] * __DISTANCE_UNIT,
+                arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + samourai.position[0] * BLOCK_UNIT,
                                              SCREEN_HEIGHT -
                                              (drawing_settings["bandanna_1_center_y"] +
-                                              samourai.position[1] * __DISTANCE_UNIT),
+                                              samourai.position[1] * BLOCK_UNIT),
                                              drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"], drawing_settings["bandanna_color"])
 
-                arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + samourai.position[0] * __DISTANCE_UNIT,
+                arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + samourai.position[0] * BLOCK_UNIT,
                                              SCREEN_HEIGHT -
-                                             (drawing_settings["bandanna_2_center_y"] +
-                                              samourai.position[1] * __DISTANCE_UNIT),
+                                            (drawing_settings["bandanna_2_center_y"] +
+                                              samourai.position[1] * BLOCK_UNIT),
                                              drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"], drawing_settings["bandanna_color"])
 
     @staticmethod
-    def __draw_viewing_region(game: Game, __DISTANCE_UNIT = 10, __SAMURAI_VIEW_RANGE_X : int = 50, __SAMURAI_VIEW_RANGE_Y : int = 50) -> bool:
+    def __draw_viewing_region(game: Game) -> bool:
         """Dessine le champ de vision du joueur (si samouraï). Retourne True si le ninja s'y trouve."""
         ninja = game.get_ninja()
         ninja_in_viewing_region = False
 
         # Récupérer le champ de vision du samouraï
         samurai = game.get_current_player()
-        viewing_region = samurai.get_viewing_region(__SAMURAI_VIEW_RANGE_X, __SAMURAI_VIEW_RANGE_Y)
+        viewing_region = samurai.get_viewing_region(SAMURAI_VIEW_RANGE_X, SAMURAI_VIEW_RANGE_Y)
 
         # Afficher les tuiles du champ de vision
         for pos in viewing_region:
@@ -176,8 +181,8 @@ class NinjaVSSamourais(arcade.Window):
             if not color:
                 color = Tile.TYPES_AND_COLORS.get(TileType.GROUND)
 
-            arcade.draw_rectangle_filled(5 + pos[0] * __DISTANCE_UNIT,
-                                         SCREEN_HEIGHT - (5 + pos[1] * __DISTANCE_UNIT), 8, 8, color)
+            arcade.draw_rectangle_filled(5 + pos[0] * BLOCK_UNIT,
+                                         SCREEN_HEIGHT - (5 + pos[1] * BLOCK_UNIT), 8, 8, color)
 
         return ninja_in_viewing_region
 
