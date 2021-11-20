@@ -133,20 +133,26 @@ class Samourai(Player):
 
     def __init__(self, x, y: int) -> None:
         super().__init__(x, y)
+        self.last_drawn_postition = None
+        self.tiles = []
 
     def get_viewing_region(self, width: int, height: int) -> list:
         """Retourne le champ de vision du samouraï."""
-        tiles = []
-        for path in self.__VIEWING_REGION_DELTAS:
-            correct_path = []
-            for delta in path:
-                x = self.position[0] + delta[0]
-                y = self.position[1] + delta[1]
 
-                if (0 <= x <= width - 1) and (0 <= y <= height - 1):
-                    correct_path.append((x, y))
-                else:
-                    break
+        if not (self.position == self.last_drawn_postition) or not self.last_drawn_postition:
+            self.last_drawn_postition = self.position
+            self.tiles.clear()
+            for path in self.__VIEWING_REGION_DELTAS:
+                correct_path = []
+                for delta in path:
+                    x = self.position[0] + delta[0]
+                    y = self.position[1] + delta[1]
 
-            tiles.append(correct_path)
-        return tiles
+                    if (0 <= x <= width - 1) and (0 <= y <= height - 1):
+                        correct_path.append((x, y))
+                    else:
+                        break
+
+                self.tiles.append(correct_path)
+
+        return self.tiles
