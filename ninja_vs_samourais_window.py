@@ -166,18 +166,22 @@ class NinjaVSSamourais(arcade.Window):
         viewing_region = samurai.get_viewing_region(50, 50)
 
         # Afficher les tuiles du champ de vision
-        for pos in viewing_region:
-            if ninja.position[0] == pos[0] and ninja.position[1] == pos[1]:
-                ninja_in_viewing_region = True
+        for path in viewing_region:
+            for pos in path:
+                if ninja.position[0] == pos[0] and ninja.position[1] == pos[1]:
+                    ninja_in_viewing_region = True
 
-            tile = game.level.get_tile(pos[0], pos[1])
+                tile = game.level.get_tile(pos[0], pos[1])
+                color = Tile.TYPES_AND_COLORS.get(tile.tile_type)
 
-            color = Tile.TYPES_AND_COLORS.get(tile.tile_type)
-            if not color:
-                color = Tile.TYPES_AND_COLORS.get(TileType.GROUND)
+                if not color:
+                    color = Tile.TYPES_AND_COLORS.get(TileType.GROUND)
 
-            arcade.draw_rectangle_filled(5 + pos[0] * 10,
-                                         SCREEN_HEIGHT - (5 + pos[1] * 10), 8, 8, color)
+                arcade.draw_rectangle_filled(5 + pos[0] * 10,
+                                             SCREEN_HEIGHT - (5 + pos[1] * 10), 8, 8, color)
+
+                if color == Tile.TYPES_AND_COLORS.get(TileType.WALL):
+                    break
 
         return ninja_in_viewing_region
 
