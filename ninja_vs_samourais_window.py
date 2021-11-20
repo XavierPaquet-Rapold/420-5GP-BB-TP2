@@ -34,13 +34,14 @@ class NinjaVSSamourais(arcade.Window):
 
     def __build_gui_from_game_level(self) -> None:
         """Construit la grille visuelle représentant le niveau courant."""
-        for y in range(self.__game.level.height):
-            for x in range(self.__game.level.width):
-                tile = self.__game.level.get_tile(x, y)
-
-                color = Tile.TYPES_AND_COLORS.get(tile.tile_type)
+        LEVEL = self.__game.level
+        for y in range(LEVEL.height):
+            for x in range(LEVEL.width):
+                tile = LEVEL.get_tile(x, y)
+                TYPES_AND_COLORS = Tile.TYPES_AND_COLORS
+                color = TYPES_AND_COLORS.get(tile.tile_type)
                 if not color:
-                    color = Tile.TYPES_AND_COLORS.get(TileType.GROUND)
+                    color = TYPES_AND_COLORS.get(TileType.GROUND)
 
                 shape = arcade.create_rectangle_filled(5 + x * 10, SCREEN_HEIGHT - (5 + y * 10), 8, 8, color)
                 self.__tile_shapes.append(shape)
