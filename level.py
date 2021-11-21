@@ -63,18 +63,36 @@ class Level:
 
         try:
             with open(filename, "r") as level_file:
-                for line in level_file:
-                    symbols = line.strip()
-                    columns = []
-                    for symbol in symbols:
-                        tile = Tile.create_from_symbol(symbol)
-                        columns.append(tile)
-                    self.__tiles.append(columns)
+                level_str = level_file.read()
+                valid_characters = self.__validate_level_characters(level_str)
+                line_length = -1
+                if valid_characters:
+                    level_lines = level_str.splitlines()
+                    for line in level_lines:
+                        if line_length != len(line) and line_length != -1:
+                            print("Les lignes dans le fichier de niveau ne sont pas de la même longueur")
+                            return
+                        line_length = len(line)
+                        symbols = line.strip()
+                        columns = []
+                        for symbol in symbols:
+                            tile = Tile.create_from_symbol(symbol)
+                            columns.append(tile)
+                        self.__tiles.append(columns)
+                else:
+                    print("Le niveau contient des caractères non valides")
+                    return
         except FileNotFoundError:
             print("Fichier introuvable : " + filename)
 
         self.__width = len(self.__tiles[0])
         self.__height = len(self.__tiles)
+    
+    def __validate_level_characters(self, level_file: str) -> bool:
+        allowed = set('\n')
+        for symbol in Tile.TYPES_AND_SYMBOLS:
+            allowed.add(symbol)
+        return set(level_file) <= allowed
 
     def setup_from_data(self, number, width, height: int, data: str) -> None:
         """Configure un niveau à partir d'une chaîne de caractères (data) descriptive."""
