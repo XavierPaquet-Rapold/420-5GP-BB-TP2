@@ -50,38 +50,11 @@ class Tile:
     @staticmethod
     def create_from_symbol(symbol: str):
         """Crée et configure une tuile en fonction du symbole."""
-        if symbol == 'S':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['S'][0],
-             walkable=Tile.TYPES_AND_SYMBOLS['S'][1])
-        elif symbol == 'W':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['W'][0], 
-            walkable=Tile.TYPES_AND_SYMBOLS['W'][1])
-        elif symbol == 'N':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['N'][0], 
-            walkable=Tile.TYPES_AND_SYMBOLS['N'][1])
-        elif symbol == '1':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['1'][0], 
-            walkable=Tile.TYPES_AND_SYMBOLS['1'][1])
-        elif symbol == '2':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['2'][0], 
-            walkable=Tile.TYPES_AND_SYMBOLS['2'][1])
-        elif symbol == '3':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['3'][0], 
-            walkable=Tile.TYPES_AND_SYMBOLS['3'][1])
-        elif symbol == '4':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['4'][0], 
-            walkable=Tile.TYPES_AND_SYMBOLS['4'][1])
-        elif symbol == '5':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['5'][0], 
-            walkable=Tile.TYPES_AND_SYMBOLS['5'][1])
-        elif symbol == '6':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['6'][0], 
-            walkable=Tile.TYPES_AND_SYMBOLS['6'][1])
-        elif symbol == 'E':
-            return Tile(tile_type= Tile.TYPES_AND_SYMBOLS['E'][0], 
-            walkable=Tile.TYPES_AND_SYMBOLS['E'][1])
-        else:
-            return Tile()
+        for type_or_symbol in Tile.TYPES_AND_SYMBOLS:
+            if symbol == type_or_symbol:
+                return Tile(tile_type= Tile.TYPES_AND_SYMBOLS[type_or_symbol][0],
+                walkable=Tile.TYPES_AND_SYMBOLS[type_or_symbol][1])
+        return Tile()
 
     @staticmethod
     def get_color_for(tile_type: TileType) -> tuple:
