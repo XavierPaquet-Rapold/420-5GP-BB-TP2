@@ -41,19 +41,20 @@ class Tile:
         self.__tile_type = tile_type
 
     def __str__(self) -> str:
-        #return self.TYPES_AND_SYMBOLS[self.__tile_type] à enlever
-        value = self.__tile_type
-        key_value = [key for key, values in self.TYPES_AND_SYMBOLS.items()
-                        if value in values] 
-        return ''.join(key_value)
+        tile_type = self.__tile_type
+        type_or_symbol = ''
+        for key, value in self.TYPES_AND_SYMBOLS.items():
+            if tile_type == value[0]:
+                type_or_symbol = key
+        return type_or_symbol
 
     @staticmethod
     def create_from_symbol(symbol: str):
         """Crée et configure une tuile en fonction du symbole."""
-        for type_or_symbol in Tile.TYPES_AND_SYMBOLS:
+        for type_or_symbol, value in Tile.TYPES_AND_SYMBOLS.items():
             if symbol == type_or_symbol:
-                return Tile(tile_type= Tile.TYPES_AND_SYMBOLS[type_or_symbol][0],
-                walkable=Tile.TYPES_AND_SYMBOLS[type_or_symbol][1])
+                return Tile(tile_type= value[0],
+                walkable= value[1])
         return Tile()
 
     @staticmethod
