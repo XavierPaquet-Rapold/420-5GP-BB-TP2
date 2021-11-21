@@ -42,11 +42,11 @@ class Tile:
 
     def __str__(self) -> str:
         tile_type = self.__tile_type
-        type_or_symbol = ''
+        symbol = ''
         for key, value in self.TYPES_AND_SYMBOLS.items():
             if tile_type == value[0]:
-                type_or_symbol = key
-        return type_or_symbol
+                symbol = key
+        return symbol
 
     @staticmethod
     def create_from_symbol(symbol: str):
