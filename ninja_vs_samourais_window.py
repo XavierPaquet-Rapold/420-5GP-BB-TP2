@@ -14,6 +14,8 @@ SCREEN_HEIGHT = 500
 SCREEN_TITLE = 'Ninja vs Samouraïs'
 
 MOVING_PACE = 5 / 60
+BLOCK_UNIT = 10
+SAMURAI_VIEW_RANGE_X = SAMURAI_VIEW_RANGE_Y = 50
 
 
 class NinjaVSSamourais(arcade.Window):
@@ -45,7 +47,7 @@ class NinjaVSSamourais(arcade.Window):
                     color = Tile.TYPES_AND_COLORS.get(TileType.GROUND)
 
                 shape = arcade.create_rectangle_filled(
-                    5 + x * 10, SCREEN_HEIGHT - (5 + y * 10), 8, 8, color)
+                    5 + x * BLOCK_UNIT, SCREEN_HEIGHT - (5 + y * BLOCK_UNIT), 8, 8, color)
                 self.__tile_shapes.append(shape)
                 self.__tiles.append(shape)
 
@@ -66,10 +68,10 @@ class NinjaVSSamourais(arcade.Window):
             "bandanna_color": (255, 192, 0)
         }
 
-        arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + ninja.position[0] * 10,
+        arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + ninja.position[0] * BLOCK_UNIT,
                                      SCREEN_HEIGHT -
                                      (drawing_settings["body_center_y"] +
-                                      ninja.position[1] * 10),
+                                      ninja.position[1] * BLOCK_UNIT),
                                      drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
 
         if ninja.facing_south:
@@ -89,10 +91,10 @@ class NinjaVSSamourais(arcade.Window):
             })
 
         if not ninja.facing_north:
-            arcade.draw_rectangle_filled(drawing_settings["bandanna_center_x"] + ninja.position[0] * 10,
+            arcade.draw_rectangle_filled(drawing_settings["bandanna_center_x"] + ninja.position[0] * BLOCK_UNIT,
                                          SCREEN_HEIGHT -
                                          (drawing_settings["bandanna_center_y"] +
-                                          ninja.position[1] * 10),
+                                          ninja.position[1] * BLOCK_UNIT),
                                          drawing_settings["bandanna_width"], drawing_settings["bandanna_height"], drawing_settings["bandanna_color"])
 
     @staticmethod
@@ -117,10 +119,10 @@ class NinjaVSSamourais(arcade.Window):
                 "bandanna_color": (0, 0, 0)
             }
 
-            arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + samourai.position[0] * 10,
+            arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + samourai.position[0] * BLOCK_UNIT,
                                          SCREEN_HEIGHT -
                                          (drawing_settings["body_center_y"] +
-                                          samourai.position[1] * 10),
+                                          samourai.position[1] * BLOCK_UNIT),
                                          drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
 
             if samourai.facing_south:
@@ -143,16 +145,16 @@ class NinjaVSSamourais(arcade.Window):
                 })
 
             if not samourai.facing_north:
-                arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + samourai.position[0] * 10,
+                arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + samourai.position[0] * BLOCK_UNIT,
                                              SCREEN_HEIGHT -
                                              (drawing_settings["bandanna_1_center_y"] +
-                                              samourai.position[1] * 10),
+                                              samourai.position[1] * BLOCK_UNIT),
                                              drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"], drawing_settings["bandanna_color"])
 
-                arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + samourai.position[0] * 10,
+                arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + samourai.position[0] * BLOCK_UNIT,
                                              SCREEN_HEIGHT -
                                              (drawing_settings["bandanna_2_center_y"] +
-                                              samourai.position[1] * 10),
+                                              samourai.position[1] * BLOCK_UNIT),
                                              drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"], drawing_settings["bandanna_color"])
 
     @staticmethod
@@ -163,7 +165,8 @@ class NinjaVSSamourais(arcade.Window):
 
         # Récupérer le champ de vision du samouraï
         samurai = game.get_current_player()
-        viewing_region = samurai.get_viewing_region(50, 50)
+        viewing_region = samurai.get_viewing_region(
+            SAMURAI_VIEW_RANGE_X, SAMURAI_VIEW_RANGE_Y)
 
         # Afficher les tuiles du champ de vision
         for path in viewing_region:
@@ -177,8 +180,8 @@ class NinjaVSSamourais(arcade.Window):
                 if not color:
                     color = Tile.TYPES_AND_COLORS.get(TileType.GROUND)
 
-                arcade.draw_rectangle_filled(5 + pos[0] * 10,
-                                             SCREEN_HEIGHT - (5 + pos[1] * 10), 8, 8, color)
+                arcade.draw_rectangle_filled(5 + pos[0] * BLOCK_UNIT,
+                                             SCREEN_HEIGHT - (5 + pos[1] * BLOCK_UNIT), 8, 8, color)
 
                 if color == Tile.TYPES_AND_COLORS.get(TileType.WALL):
                     break
