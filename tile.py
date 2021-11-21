@@ -23,50 +23,39 @@ class Tile:
                         TileType.WALL: (255, 255, 255),
                         TileType.EXIT: (64, 64, 64)}
 
-    TYPES_AND_SYMBOLS = {TileType.GROUND: ' ',
-                         TileType.STONE: 'S',
-                         TileType.WALL: 'W',
-                         TileType.NINJA_START_POS: 'N',
-                         TileType.SAMOURAI_START_POS_1: '1',
-                         TileType.SAMOURAI_START_POS_2: '2',
-                         TileType.SAMOURAI_START_POS_3: '3',
-                         TileType.SAMOURAI_START_POS_4: '4',
-                         TileType.SAMOURAI_START_POS_5: '5',
-                         TileType.SAMOURAI_START_POS_6: '6',
-                         TileType.EXIT: 'E'}
+    TYPES_AND_SYMBOLS = {' ': [TileType.GROUND, True],
+                         'S': [TileType.STONE, False],
+                         'W': [TileType.WALL, False],
+                         'N': [TileType.NINJA_START_POS, True],
+                         '1': [TileType.SAMOURAI_START_POS_1, True],
+                         '2': [TileType.SAMOURAI_START_POS_2,True],
+                         '3': [TileType.SAMOURAI_START_POS_3,True], 
+                         '4': [TileType.SAMOURAI_START_POS_4,True], 
+                         '5': [TileType.SAMOURAI_START_POS_5,True],
+                         '6': [TileType.SAMOURAI_START_POS_6,True],
+                         'E': [TileType.EXIT,True]}
+
 
     def __init__(self, walkable: bool = True, tile_type: TileType = TileType.GROUND) -> None:
         self.__walkable = walkable
         self.__tile_type = tile_type
 
     def __str__(self) -> str:
-        return self.TYPES_AND_SYMBOLS[self.__tile_type]
+        tile_type = self.__tile_type
+        type_or_symbol = ''
+        for key, value in self.TYPES_AND_SYMBOLS.items():
+            if tile_type == value[0]:
+                type_or_symbol = key
+        return type_or_symbol
 
     @staticmethod
     def create_from_symbol(symbol: str):
         """Crée et configure une tuile en fonction du symbole."""
-        if symbol == Tile.TYPES_AND_SYMBOLS[TileType.STONE]:
-            return Tile(tile_type=TileType.STONE, walkable=False)
-        elif symbol == Tile.TYPES_AND_SYMBOLS[TileType.WALL]:
-            return Tile(tile_type=TileType.WALL, walkable=False)
-        elif symbol == Tile.TYPES_AND_SYMBOLS[TileType.NINJA_START_POS]:
-            return Tile(tile_type=TileType.NINJA_START_POS)
-        elif symbol == Tile.TYPES_AND_SYMBOLS[TileType.SAMOURAI_START_POS_1]:
-            return Tile(tile_type=TileType.SAMOURAI_START_POS_1)
-        elif symbol == Tile.TYPES_AND_SYMBOLS[TileType.SAMOURAI_START_POS_2]:
-            return Tile(tile_type=TileType.SAMOURAI_START_POS_2)
-        elif symbol == Tile.TYPES_AND_SYMBOLS[TileType.SAMOURAI_START_POS_3]:
-            return Tile(tile_type=TileType.SAMOURAI_START_POS_3)
-        elif symbol == Tile.TYPES_AND_SYMBOLS[TileType.SAMOURAI_START_POS_4]:
-            return Tile(tile_type=TileType.SAMOURAI_START_POS_4)
-        elif symbol == Tile.TYPES_AND_SYMBOLS[TileType.SAMOURAI_START_POS_5]:
-            return Tile(tile_type=TileType.SAMOURAI_START_POS_5)
-        elif symbol == Tile.TYPES_AND_SYMBOLS[TileType.SAMOURAI_START_POS_6]:
-            return Tile(tile_type=TileType.SAMOURAI_START_POS_6)
-        elif symbol == Tile.TYPES_AND_SYMBOLS[TileType.EXIT]:
-            return Tile(tile_type=TileType.EXIT)
-        else:
-            return Tile()
+        for type_or_symbol, value in Tile.TYPES_AND_SYMBOLS.items():
+            if symbol == type_or_symbol:
+                return Tile(tile_type= value[0],
+                walkable= value[1])
+        return Tile()
 
     @staticmethod
     def get_color_for(tile_type: TileType) -> tuple:
