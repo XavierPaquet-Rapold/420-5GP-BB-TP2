@@ -20,7 +20,7 @@ class Tile:
 
     TYPES_AND_COLORS = {TileType.GROUND: (64, 64, 64),
                         TileType.STONE: (96, 96, 96),
-                        TileType.WALL: (84, 62, 0),
+                        TileType.WALL: (255, 255, 255),
                         TileType.EXIT: (64, 64, 64)}
 
     TYPES_AND_SYMBOLS = {TileType.GROUND: ' ',

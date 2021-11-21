@@ -13,10 +13,13 @@ SCREEN_HEIGHT = 500
 SCREEN_TITLE = 'Ninja vs Samouraïs'
 
 MOVING_PACE = 5 / 60
+BLOCK_UNIT = 10
+SAMURAI_VIEW_RANGE_X = SAMURAI_VIEW_RANGE_Y = 50
 
 
 class NinjaVSSamourais(arcade.Window):
     """Fenêtre principale de l'application arcade."""
+
     def __init__(self, game: Game, game_client: GameClient,
                  width: int = SCREEN_WIDTH, height: int = SCREEN_HEIGHT, title: str = SCREEN_TITLE):
         super().__init__(width, height, title)
@@ -43,7 +46,8 @@ class NinjaVSSamourais(arcade.Window):
                 if not color:
                     color = TYPES_AND_COLORS.get(TileType.GROUND)
 
-                shape = arcade.create_rectangle_filled(5 + x * 10, SCREEN_HEIGHT - (5 + y * 10), 8, 8, color)
+                shape = arcade.create_rectangle_filled(
+                    5 + x * BLOCK_UNIT, SCREEN_HEIGHT - (5 + y * BLOCK_UNIT), 8, 8, color)
                 self.__tile_shapes.append(shape)
                 self.__tiles.append(shape)
 
@@ -51,46 +55,107 @@ class NinjaVSSamourais(arcade.Window):
     def __draw_ninja(game: Game) -> None:
         """Dessine le ninja."""
         ninja = game.get_ninja()
-        arcade.draw_rectangle_filled(5 + ninja.position[0] * 10,
-                                     SCREEN_HEIGHT - (5 + ninja.position[1] * 10), 8, 8, (0, 0, 0))
+        drawing_settings = {
+            "body_center_x": 5,
+            "body_center_y": 5,
+            "body_width": 8,
+            "body_height": 8,
+            "body_color": (0, 0, 0),
+            "bandanna_center_x": 0,
+            "bandanna_center_y": 3,
+            "bandanna_width": 0,
+            "bandanna_height": 1,
+            "bandanna_color": (255, 192, 0)
+        }
 
-        if ninja.facing_north:
-            pass
-        elif ninja.facing_south:
-            arcade.draw_rectangle_filled(5 + ninja.position[0] * 10,
-                                         SCREEN_HEIGHT - (3 + ninja.position[1] * 10), 8, 1, (255, 192, 0))
+        arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + ninja.position[0] * BLOCK_UNIT,
+                                     SCREEN_HEIGHT -
+                                     (drawing_settings["body_center_y"] +
+                                      ninja.position[1] * BLOCK_UNIT),
+                                     drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
+
+        if ninja.facing_south:
+            drawing_settings.update({
+                "bandanna_center_x": 5,
+                "bandanna_width": 8
+            })
         elif ninja.facing_east:
-            arcade.draw_rectangle_filled(7 + ninja.position[0] * 10,
-                                         SCREEN_HEIGHT - (3 + ninja.position[1] * 10), 6, 1, (255, 192, 0))
+            drawing_settings.update({
+                "bandanna_center_x": 7,
+                "bandanna_width": 6
+            })
         else:
-            arcade.draw_rectangle_filled(3 + ninja.position[0] * 10,
-                                         SCREEN_HEIGHT - (3 + ninja.position[1] * 10), 6, 1, (255, 192, 0))
+            drawing_settings.update({
+                "bandanna_center_x": 3,
+                "bandanna_width": 6
+            })
+
+        if not ninja.facing_north:
+            arcade.draw_rectangle_filled(drawing_settings["bandanna_center_x"] + ninja.position[0] * BLOCK_UNIT,
+                                         SCREEN_HEIGHT -
+                                         (drawing_settings["bandanna_center_y"] +
+                                          ninja.position[1] * BLOCK_UNIT),
+                                         drawing_settings["bandanna_width"], drawing_settings["bandanna_height"], drawing_settings["bandanna_color"])
 
     @staticmethod
     def __draw_samourais(game: Game) -> None:
         """Dessine les samouraïs."""
         for i in range(1, 7):
             samourai = game.get_player(i)
-            arcade.draw_rectangle_filled(5 + samourai.position[0] * 10,
-                                         SCREEN_HEIGHT - (5 + samourai.position[1] * 10), 8, 8,
-                                         Samourai.COLORS[i - 1])
-            if samourai.facing_north:
-                pass
-            elif samourai.facing_south:
-                arcade.draw_rectangle_filled(5 + samourai.position[0] * 10,
-                                             SCREEN_HEIGHT - (3 + samourai.position[1] * 10), 8, 1, (0, 0, 0))
-                arcade.draw_rectangle_filled(5 + samourai.position[0] * 10,
-                                             SCREEN_HEIGHT - (4 + samourai.position[1] * 10), 2, 2, (0, 0, 0))
+            drawing_settings = {
+                "body_center_x": 5,
+                "body_center_y": 5,
+                "body_width": 8,
+                "body_height": 8,
+                "body_color": Samourai.COLORS[i - 1],
+                "bandanna_1_center_x": 0,
+                "bandanna_1_center_y": 3,
+                "bandanna_1_width": 0,
+                "bandanna_1_height": 1,
+                "bandanna_2_center_x": 0,
+                "bandanna_2_center_y": 4,
+                "bandanna_2_width": 2,
+                "bandanna_2_height": 2,
+                "bandanna_color": (0, 0, 0)
+            }
+
+            arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + samourai.position[0] * BLOCK_UNIT,
+                                         SCREEN_HEIGHT -
+                                         (drawing_settings["body_center_y"] +
+                                          samourai.position[1] * BLOCK_UNIT),
+                                         drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
+
+            if samourai.facing_south:
+                drawing_settings.update({
+                    "bandanna_1_center_x": 5,
+                    "bandanna_1_width": 8,
+                    "bandanna_2_center_x": 5
+                })
             elif samourai.facing_east:
-                arcade.draw_rectangle_filled(7 + samourai.position[0] * 10,
-                                             SCREEN_HEIGHT - (3 + samourai.position[1] * 10), 6, 1, (0, 0, 0))
-                arcade.draw_rectangle_filled(8 + samourai.position[0] * 10,
-                                             SCREEN_HEIGHT - (4 + samourai.position[1] * 10), 2, 2, (0, 0, 0))
+                drawing_settings.update({
+                    "bandanna_1_center_x": 7,
+                    "bandanna_1_width": 6,
+                    "bandanna_2_center_x": 8
+                })
             else:
-                arcade.draw_rectangle_filled(3 + samourai.position[0] * 10,
-                                             SCREEN_HEIGHT - (3 + samourai.position[1] * 10), 6, 1, (0, 0, 0))
-                arcade.draw_rectangle_filled(2 + samourai.position[0] * 10,
-                                             SCREEN_HEIGHT - (4 + samourai.position[1] * 10), 2, 2, (0, 0, 0))
+                drawing_settings.update({
+                    "bandanna_1_center_x": 3,
+                    "bandanna_1_width": 6,
+                    "bandanna_2_center_x": 2
+                })
+
+            if not samourai.facing_north:
+                arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + samourai.position[0] * BLOCK_UNIT,
+                                             SCREEN_HEIGHT -
+                                             (drawing_settings["bandanna_1_center_y"] +
+                                              samourai.position[1] * BLOCK_UNIT),
+                                             drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"], drawing_settings["bandanna_color"])
+
+                arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + samourai.position[0] * BLOCK_UNIT,
+                                             SCREEN_HEIGHT -
+                                             (drawing_settings["bandanna_2_center_y"] +
+                                              samourai.position[1] * BLOCK_UNIT),
+                                             drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"], drawing_settings["bandanna_color"])
 
     @staticmethod
     def __draw_viewing_region(game: Game) -> bool:
@@ -100,21 +165,26 @@ class NinjaVSSamourais(arcade.Window):
 
         # Récupérer le champ de vision du samouraï
         samurai = game.get_current_player()
-        viewing_region = samurai.get_viewing_region(50, 50)
+        viewing_region = samurai.get_viewing_region(
+            SAMURAI_VIEW_RANGE_X, SAMURAI_VIEW_RANGE_Y)
 
         # Afficher les tuiles du champ de vision
-        for pos in viewing_region:
-            if ninja.position[0] == pos[0] and ninja.position[1] == pos[1]:
-                ninja_in_viewing_region = True
+        for path in viewing_region:
+            for pos in path:
+                if ninja.position[0] == pos[0] and ninja.position[1] == pos[1]:
+                    ninja_in_viewing_region = True
 
-            tile = game.level.get_tile(pos[0], pos[1])
+                tile = game.level.get_tile(pos[0], pos[1])
+                color = Tile.TYPES_AND_COLORS.get(tile.tile_type)
 
-            color = Tile.TYPES_AND_COLORS.get(tile.tile_type)
-            if not color:
-                color = Tile.TYPES_AND_COLORS.get(TileType.GROUND)
+                if not color:
+                    color = Tile.TYPES_AND_COLORS.get(TileType.GROUND)
 
-            arcade.draw_rectangle_filled(5 + pos[0] * 10,
-                                         SCREEN_HEIGHT - (5 + pos[1] * 10), 8, 8, color)
+                arcade.draw_rectangle_filled(5 + pos[0] * BLOCK_UNIT,
+                                             SCREEN_HEIGHT - (5 + pos[1] * BLOCK_UNIT), 8, 8, color)
+
+                if color == Tile.TYPES_AND_COLORS.get(TileType.WALL):
+                    break
 
         return ninja_in_viewing_region
 
@@ -128,7 +198,8 @@ class NinjaVSSamourais(arcade.Window):
             if self.__game.i_am_the_ninja():
                 self.__tiles.draw()    # le ninja voit tout le niveau
             else:
-                ninja_in_viewing_region = self.__draw_viewing_region(self.__game)
+                ninja_in_viewing_region = self.__draw_viewing_region(
+                    self.__game)
 
             if self.__game.i_am_the_ninja() or ninja_in_viewing_region:
                 self.__draw_ninja(self.__game)
