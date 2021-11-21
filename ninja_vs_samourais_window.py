@@ -1,5 +1,4 @@
 import arcade
-from pyglet.libs.x11.xlib import Bool
 
 from game import Game
 from game import GameState
