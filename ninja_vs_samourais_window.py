@@ -102,64 +102,66 @@ class NinjaVSSamourais(arcade.Window):
         """Dessine les samouraïs."""
         list_of_players = game.get_all_players()
         index = 0
-        for i in list_of_players:
-            samourai = i# game.get_player(i)
-            drawing_settings = {
-                "offset_x": 5,
-                "offset_y": 5,
-                "body_width": 8,
-                "body_height": 8,
-                "body_color": Samourai.COLORS[index - 1],
-                "bandanna_1_center_x": 0,
-                "bandanna_1_center_y": 3,
-                "bandanna_1_width": 0,
-                "bandanna_1_height": 1,
-                "bandanna_2_center_x": 0,
-                "bandanna_2_center_y": 4,
-                "bandanna_2_width": 2,
-                "bandanna_2_height": 2,
-                "bandanna_color": (0, 0, 0)
-            }
-            index = index +1
+        for samourai in list_of_players:
+            ninja = list_of_players[0]
+            if samourai != ninja: #si le joueur n'est pas un ninja
+
+                drawing_settings = {
+                    "offset_x": 5,
+                    "offset_y": 5,
+                    "body_width": 8,
+                    "body_height": 8,
+                    "body_color": Samourai.COLORS[index - 1],
+                    "bandanna_1_center_x": 0,
+                    "bandanna_1_center_y": 3,
+                    "bandanna_1_width": 0,
+                    "bandanna_1_height": 1,
+                    "bandanna_2_center_x": 0,
+                    "bandanna_2_center_y": 4,
+                    "bandanna_2_width": 2,
+                    "bandanna_2_height": 2,
+                    "bandanna_color": (0, 0, 0)
+                }
+                index = index +1
 
 
-            arcade.draw_rectangle_filled(drawing_settings["offset_x"] + samourai.position[0] * BLOCK_UNIT,
-                                         SCREEN_HEIGHT -
-                                         (drawing_settings["offset_y"] +
-                                          samourai.position[1] * BLOCK_UNIT),
-                                         drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
+                arcade.draw_rectangle_filled(drawing_settings["offset_x"] + samourai.position[0] * BLOCK_UNIT,
+                                            SCREEN_HEIGHT -
+                                            (drawing_settings["offset_y"] +
+                                            samourai.position[1] * BLOCK_UNIT),
+                                            drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
 
-            if samourai.facing_south:
-                drawing_settings.update({
-                    "bandanna_1_center_x": 5,
-                    "bandanna_1_width": 8,
-                    "bandanna_2_center_x": 5
-                })
-            elif samourai.facing_east:
-                drawing_settings.update({
-                    "bandanna_1_center_x": 7,
-                    "bandanna_1_width": 6,
-                    "bandanna_2_center_x": 8
-                })
-            else:
-                drawing_settings.update({
-                    "bandanna_1_center_x": 3,
-                    "bandanna_1_width": 6,
-                    "bandanna_2_center_x": 2
-                })
+                if samourai.facing_south:
+                    drawing_settings.update({
+                        "bandanna_1_center_x": 5,
+                        "bandanna_1_width": 8,
+                        "bandanna_2_center_x": 5
+                    })
+                elif samourai.facing_east:
+                    drawing_settings.update({
+                        "bandanna_1_center_x": 7,
+                        "bandanna_1_width": 6,
+                        "bandanna_2_center_x": 8
+                    })
+                else:
+                    drawing_settings.update({
+                        "bandanna_1_center_x": 3,
+                        "bandanna_1_width": 6,
+                        "bandanna_2_center_x": 2
+                    })
 
-            if not samourai.facing_north:
-                arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + samourai.position[0] * BLOCK_UNIT,
-                                             SCREEN_HEIGHT -
-                                             (drawing_settings["bandanna_1_center_y"] +
-                                              samourai.position[1] * BLOCK_UNIT),
-                                             drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"], drawing_settings["bandanna_color"])
+                if not samourai.facing_north:
+                    arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + samourai.position[0] * BLOCK_UNIT,
+                                                SCREEN_HEIGHT -
+                                                (drawing_settings["bandanna_1_center_y"] +
+                                                samourai.position[1] * BLOCK_UNIT),
+                                                drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"], drawing_settings["bandanna_color"])
 
-                arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + samourai.position[0] * BLOCK_UNIT,
-                                             SCREEN_HEIGHT -
-                                             (drawing_settings["bandanna_2_center_y"] +
-                                              samourai.position[1] * BLOCK_UNIT),
-                                             drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"], drawing_settings["bandanna_color"])
+                    arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + samourai.position[0] * BLOCK_UNIT,
+                                                SCREEN_HEIGHT -
+                                                (drawing_settings["bandanna_2_center_y"] +
+                                                samourai.position[1] * BLOCK_UNIT),
+                                                drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"], drawing_settings["bandanna_color"])
 
     @staticmethod
     def __draw_viewing_region(game: Game) -> bool:
