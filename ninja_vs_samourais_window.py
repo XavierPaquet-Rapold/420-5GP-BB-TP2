@@ -56,8 +56,8 @@ class NinjaVSSamourais(arcade.Window):
         """Dessine le ninja."""
         ninja = game.get_ninja()
         drawing_settings = {
-            "body_center_x": 5,
-            "body_center_y": 5,
+            "offset_x": 5,
+            "offset_y": 5,
             "body_width": 8,
             "body_height": 8,
             "body_color": (0, 0, 0),
@@ -68,9 +68,9 @@ class NinjaVSSamourais(arcade.Window):
             "bandanna_color": (255, 192, 0)
         }
 
-        arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + ninja.position[0] * BLOCK_UNIT,
+        arcade.draw_rectangle_filled(drawing_settings["offset_x"] + ninja.position[0] * BLOCK_UNIT,
                                      SCREEN_HEIGHT -
-                                     (drawing_settings["body_center_y"] +
+                                     (drawing_settings["offset_y"] +
                                       ninja.position[1] * BLOCK_UNIT),
                                      drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
 
@@ -103,8 +103,8 @@ class NinjaVSSamourais(arcade.Window):
         for i in range(1, 7):
             samourai = game.get_player(i)
             drawing_settings = {
-                "body_center_x": 5,
-                "body_center_y": 5,
+                "offset_x": 5,
+                "offset_y": 5,
                 "body_width": 8,
                 "body_height": 8,
                 "body_color": Samourai.COLORS[i - 1],
@@ -119,9 +119,9 @@ class NinjaVSSamourais(arcade.Window):
                 "bandanna_color": (0, 0, 0)
             }
 
-            arcade.draw_rectangle_filled(drawing_settings["body_center_x"] + samourai.position[0] * BLOCK_UNIT,
+            arcade.draw_rectangle_filled(drawing_settings["offset_x"] + samourai.position[0] * BLOCK_UNIT,
                                          SCREEN_HEIGHT -
-                                         (drawing_settings["body_center_y"] +
+                                         (drawing_settings["offset_y"] +
                                           samourai.position[1] * BLOCK_UNIT),
                                          drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
 
