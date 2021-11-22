@@ -100,14 +100,16 @@ class NinjaVSSamourais(arcade.Window):
     @staticmethod
     def __draw_samourais(game: Game) -> None:
         """Dessine les samouraïs."""
-        for i in range(1, 7):
-            samourai = game.get_player(i)
+        list_of_players = game.get_all_players()
+        index = 0
+        for i in list_of_players:
+            samourai = i# game.get_player(i)
             drawing_settings = {
                 "offset_x": 5,
                 "offset_y": 5,
                 "body_width": 8,
                 "body_height": 8,
-                "body_color": Samourai.COLORS[i - 1],
+                "body_color": Samourai.COLORS[index - 1],
                 "bandanna_1_center_x": 0,
                 "bandanna_1_center_y": 3,
                 "bandanna_1_width": 0,
@@ -118,6 +120,8 @@ class NinjaVSSamourais(arcade.Window):
                 "bandanna_2_height": 2,
                 "bandanna_color": (0, 0, 0)
             }
+            index = index +1
+
 
             arcade.draw_rectangle_filled(drawing_settings["offset_x"] + samourai.position[0] * BLOCK_UNIT,
                                          SCREEN_HEIGHT -

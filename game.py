@@ -48,6 +48,9 @@ class Game:
 
     def get_player(self, player_id: int):
         return self.__players[player_id]
+    
+    def get_all_players(self) -> list:
+        return self.__players
 
     def next_level(self) -> None:
         self.__level_number += 1
