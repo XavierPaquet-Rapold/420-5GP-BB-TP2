@@ -10,7 +10,7 @@ class Player:
         self.__facing_south = True
         self.__facing_north = self.__facing_east = self.__facing_west = False
 
-        self.is_active = False # représente la présence d'un joueur
+        self.__is_active = False # représente la présence d'un joueur
 
     def __move(self, level: Level, delta_x, delta_y: int) -> bool:
         tile = level.get_tile(
@@ -85,6 +85,10 @@ class Player:
     @position.setter
     def position(self, position: tuple) -> None:
         self.__position = position
+    
+    @player_active.setter
+    def player_active(self, is_active: bool) -> None:
+        self.__is_active = is_active
 
 
 class Ninja(Player):

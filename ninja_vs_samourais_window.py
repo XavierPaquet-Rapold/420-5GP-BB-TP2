@@ -104,7 +104,7 @@ class NinjaVSSamourais(arcade.Window):
         index = 0
         for samourai in list_of_players:
             ninja = list_of_players[0]
-            if samourai != ninja and samourai.is_active: #si le joueur n'est pas un ninja
+            if samourai != ninja and samourai.player_active: #si le joueur n'est pas un ninja
 
                 drawing_settings = {
                     "offset_x": 5,
@@ -244,7 +244,8 @@ class NinjaVSSamourais(arcade.Window):
             self.__game.state = GameState.PLAYING_LEVEL
         elif self.__game.state == GameState.PLAYING_LEVEL:
             self.__time_since_last_move += delta_time
-            self.__game.get_player(self.__game.player_id).is_active = True
+            self.__game.get_player(self.__game.player_id).player_active = True
+            print("Le player: " + str(self.__game.player_id) + " et " + str(self.__game.get_player(self.__game.player_id).player_active) )
 
 
             if self.__time_since_last_move >= MOVING_PACE:
@@ -260,8 +261,8 @@ class NinjaVSSamourais(arcade.Window):
                     dispatch_position = myself.move_west(self.__game.level)
                 if self.__moving_east:
                     dispatch_position = myself.move_east(self.__game.level)
-                if myself.is_active:
-                    self.__draw_samourais
+               # if myself.is_active:
+                    #self.__draw_samourais
 
                 if dispatch_position:
                     self.__game_client.send_position(myself.position)
