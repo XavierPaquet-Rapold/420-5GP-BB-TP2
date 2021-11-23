@@ -10,7 +10,7 @@ class Player:
         self.__facing_south = True
         self.__facing_north = self.__facing_east = self.__facing_west = False
 
-        self.__is_active = False # représente la présence d'un joueur
+        self.is_active = False # représente la présence d'un joueur
 
     def __move(self, level: Level, delta_x, delta_y: int) -> bool:
         tile = level.get_tile(
