@@ -49,11 +49,14 @@ class Game:
     def get_player(self, player_id: int):
         return self.__players[player_id]
 
-    def next_level(self) -> None:
+    def next_level(self) -> bool:
         self.__level_number += 1
         self.__level = Level()
-        self.level.load(self.__level_number)
+        load_success = self.level.load(self.__level_number)
+        if not load_success:
+            return load_success
         self.__create_ninja_and_samourais()
+        return load_success
 
     def set_level(self, level) -> None:
         self.__level = level
