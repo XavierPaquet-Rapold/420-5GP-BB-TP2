@@ -42,6 +42,7 @@ class NetMessage:
     CMD_SID = 'SID'  # session ID
     CMD_POS = 'POS'  # position
     CMD_LVL = 'LVL'  # level
+    CMD_ACTIVE = 'ACT' #active
 
     DATA_POS_BYTES = 3
 
@@ -64,6 +65,10 @@ class NetMessage:
 
     def is_level(self) -> bool:
         return self.__command == self.CMD_LVL
+    
+    #is active
+    def is_active(self) -> bool:
+        return self.__command == self.CMD_ACTIVE
 
     def is_position(self) -> bool:
         return self.__command == self.CMD_POS
