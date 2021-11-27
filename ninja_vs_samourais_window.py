@@ -104,7 +104,7 @@ class NinjaVSSamourais(arcade.Window):
 
         for samourai in list_of_players:
             ninja = list_of_players[0]
-            if samourai != ninja and samourai.player_active: #si le joueur n'est pas un ninja
+            if samourai != ninja and samourai.player_active: #si le joueur n'est pas un ninja et il est actif
                 index = list_of_players.index(samourai)
                 drawing_settings = {
                     "offset_x": 5,
