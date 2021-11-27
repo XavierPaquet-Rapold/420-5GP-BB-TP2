@@ -1,7 +1,7 @@
 import socket
 import sys
 import threading
-
+import random
 
 from queue import Queue
 
@@ -90,6 +90,9 @@ class NetMessage:
 
 def message2data(message: NetMessage) -> str:
     """Transforme un message en une chaîne de caractères (COMMAND|DATA LENGTH|DATA) à transmettre sur le réseau."""
+    # if(random.randint(0,9) == 5) :
+    #     return message.command + message.source + \
+    #         message.destination + str(len(message.data)) + message.data
     return message.command + message.source + \
         message.destination + str(len(message.data)).zfill(NetMessage.DATA_LENGTH_BYTES) + message.data
 
@@ -97,23 +100,29 @@ def message2data(message: NetMessage) -> str:
 def data2message(string: str) -> NetMessage:
     """Transforme une chaîne de caractères (COMMAND|DATA LENGTH|DATA) reçue du réseau en message."""
     if len(string) < NetMessage.HEADER_BYTES:
-        raise Exception
-
+        return
+    print(string)
     src = string[NetMessage.SRC_OFFSET:NetMessage.SRC_OFFSET+NetMessage.SRC_BYTES]
     if not src.isdigit():
-        raise Exception
+        return False
 
     dest = string[NetMessage.DEST_OFFSET:NetMessage.DEST_OFFSET+NetMessage.DEST_BYTES]
     if not dest.isdigit():
-        raise Exception
+        return False
 
     data_length_str = string[NetMessage.DATA_LENGTH_OFFSET:NetMessage.DATA_LENGTH_OFFSET+NetMessage.DATA_LENGTH_BYTES]
     if not data_length_str.isdigit():
-        raise Exception
+        return False
     data_length = int(data_length_str)
+    if len(string) < NetMessage.HEADER_BYTES + data_length:
+        return
 
     cmd = string[NetMessage.CMD_OFFSET:NetMessage.CMD_OFFSET+NetMessage.CMD_BYTES]
+    if not cmd.isalpha():
+        return False
     data = string[NetMessage.DATA_OFFSET:NetMessage.DATA_OFFSET+data_length]
+    if not data.isalnum() and len(data) != 0:
+        return False
 
     return NetMessage(cmd, src, dest, data)
 
@@ -330,8 +339,15 @@ class NetRX(threading.Thread):
 
         while len(data) > 0:
             message = data2message(data)
-            messages.append(message)
+            if message == None:
+                print("ERROR: buffer dropped")
+                break
             data = data[NetMessage.HEADER_BYTES+len(message.data):]
+            if message == False:
+                print("ERROR: message dropped")
+                continue
+            messages.append(message)
+            
 
         return messages
 
