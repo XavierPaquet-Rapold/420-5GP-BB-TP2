@@ -81,13 +81,25 @@ class Player:
 
 
 class Ninja(Player):
+
     """Représente les spécificités du personnage ninja (éventuellement)."""
 
     def __init__(self, x, y: int) -> None:
+        self.__pv_ninja_max = 50
+        self.__pv_ninja = self.__pv_ninja_max
         super().__init__(x, y)
 
+    @property
+    def pv_max_ninja(self) -> int:
+        return self.__pv_ninja_max
+
+    @property
+    def pv_ninja(self) -> int:
+        return self.__pv_ninja
 
 class Samourai(Player):
+
+
     """Représente les spécificités des personnages samouraïs."""
     COLORS = [(91, 155, 213),   # samourai 1
               (112, 173, 71),   # samourai 2
@@ -132,9 +144,12 @@ class Samourai(Player):
     ]
 
     def __init__(self, x, y: int) -> None:
+        self.__pv_samourai_max = 100
+        self.__pv_samourai = self.__pv_samourai_max
         super().__init__(x, y)
         self.last_drawn_postition = None
         self.tiles = []
+
 
     def get_viewing_region(self, width: int, height: int) -> list:
         """Retourne le champ de vision du samouraï."""
@@ -156,3 +171,14 @@ class Samourai(Player):
                 self.tiles.append(correct_path)
 
         return self.tiles
+
+    @property
+    def pv_max_samourai(self) -> int:
+        return self.__pv_samourai_max
+
+    @property
+    def pv_samourai(self) -> int:
+        return self.__pv_samourai
+
+
+
