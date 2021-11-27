@@ -242,11 +242,9 @@ class NinjaVSSamourais(arcade.Window):
         elif self.__game.state == GameState.LEVEL_RECEIVED:
             self.__build_gui_from_game_level()
             self.__game.state = GameState.PLAYING_LEVEL
+            self.__game.get_player(self.__game.player_id).player_active = True
         elif self.__game.state == GameState.PLAYING_LEVEL:
             self.__time_since_last_move += delta_time
-            self.__game.get_player(self.__game.player_id).player_active = True
-            print("Le player: " + str(self.__game.player_id) + " et " + str(self.__game.get_player(self.__game.player_id).player_active) )
-
 
             if self.__time_since_last_move >= MOVING_PACE:
                 self.__time_since_last_move = 0.0

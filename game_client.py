@@ -31,6 +31,13 @@ class GameClient:
             elif message.is_level():
                 game.set_level(self.__unserialize_level(message.data))
                 game.state = GameState.LEVEL_RECEIVED
+            elif message.is_active():
+                active = message.data
+                if active == "True":
+                    player_id = int(message.source)
+                    game.update_is_active(player_id)
+                    
+
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""

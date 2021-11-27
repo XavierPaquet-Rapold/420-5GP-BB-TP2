@@ -26,9 +26,10 @@ class GameServer:
                 self.__send_to_all_but_source(net_msg)
             elif message.is_level():
                 self.send_level_to(message.source, str(game.level))
-            elif message.is_active():
-                net_msg = NetMessage(message.command, message.source, NetMessage.DEST_ALL, message.data)
-                #send active for all
+                #send to all player is active
+                net_msg = NetMessage(NetMessage.CMD_ACT, message.source, NetMessage.DEST_ALL, "True")
+                self.__send_to_all_but_source(net_msg)
+           
     def get_ip(self) -> str:
         return self.__network_server.get_ip()
 
