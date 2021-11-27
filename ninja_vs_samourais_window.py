@@ -101,17 +101,17 @@ class NinjaVSSamourais(arcade.Window):
     def __draw_samourais(game: Game) -> None:
         """Dessine les samouraïs."""
         list_of_players = game.get_all_players()
-        index = 0
+
         for samourai in list_of_players:
             ninja = list_of_players[0]
             if samourai != ninja and samourai.player_active: #si le joueur n'est pas un ninja
-
+                index = list_of_players.index(samourai)
                 drawing_settings = {
                     "offset_x": 5,
                     "offset_y": 5,
                     "body_width": 8,
                     "body_height": 8,
-                    "body_color": Samourai.COLORS[index - 1],
+                    "body_color": Samourai.COLORS[ index - 1],
                     "bandanna_1_center_x": 0,
                     "bandanna_1_center_y": 3,
                     "bandanna_1_width": 0,
