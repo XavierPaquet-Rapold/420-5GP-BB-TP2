@@ -8,10 +8,13 @@ from tile import Tile
 from tile import TileType
 
 SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 500
+SCREEN_HEIGHT = 520
 HEALTH_BAR_POSITION_X = 70
-HEALTH_BAR_POSITION_Y = 480
+HEALTH_BAR_POSITION_Y = 10
 HEALTH_BAR_HEIGHT = 10
+HEALTH_BAR_MULTIPLICATOR = 10
+HUD_WIDTH = 1000
+HUD_HEIGHT = 40
 
 SCREEN_TITLE = 'Ninja vs Samouraïs'
 
@@ -199,8 +202,8 @@ class NinjaVSSamourais(arcade.Window):
         return ninja_in_viewing_region
 
     @staticmethod
-    def __health_bar(game: Game, isSamourai: bool) -> None:
-        if isSamourai:
+    def __health_bar(game: Game, is_samourai: bool) -> None:
+        if is_samourai:
             player = game.get_current_player()
             pv_max = player.pv_max_samourai
             pv = player.pv_samourai
@@ -208,11 +211,12 @@ class NinjaVSSamourais(arcade.Window):
             player = game.get_current_player()
             pv_max = player.pv_max_ninja
             pv = player.pv_ninja
+        arcade.draw_rectangle_filled(0, 0, HUD_WIDTH, HUD_HEIGHT, arcade.color.JAPANESE_VIOLET)
 
-        arcade.draw_rectangle_outline(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, pv_max, HEALTH_BAR_HEIGHT,
-                                      arcade.color.RED)
-        arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, pv, HEALTH_BAR_HEIGHT,
-                                     arcade.color.RED)
+        arcade.draw_rectangle_outline(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, pv_max * HEALTH_BAR_MULTIPLICATOR,
+                                      HEALTH_BAR_HEIGHT, arcade.color.RED)
+        arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, pv * HEALTH_BAR_MULTIPLICATOR,
+                                     HEALTH_BAR_HEIGHT, arcade.color.RED)
 
     def on_draw(self) -> None:
         """Dessine l'écran sur une base régulière."""

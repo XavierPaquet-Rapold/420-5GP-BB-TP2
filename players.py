@@ -85,7 +85,7 @@ class Ninja(Player):
     """Représente les spécificités du personnage ninja (éventuellement)."""
 
     def __init__(self, x, y: int) -> None:
-        self.__pv_ninja_max = 50
+        self.__pv_ninja_max = 10
         self.__pv_ninja = self.__pv_ninja_max
         super().__init__(x, y)
 
@@ -144,7 +144,7 @@ class Samourai(Player):
     ]
 
     def __init__(self, x, y: int) -> None:
-        self.__pv_samourai_max = 100
+        self.__pv_samourai_max = 10
         self.__pv_samourai = self.__pv_samourai_max
         super().__init__(x, y)
         self.last_drawn_postition = None
