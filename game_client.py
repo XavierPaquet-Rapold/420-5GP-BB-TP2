@@ -54,11 +54,6 @@ class GameClient:
         net_msg = NetMessage(NetMessage.CMD_POS, self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
         self.__send(net_msg)
 
-    # def send_session_inactive(self) -> None:
-    #     """Envoie l"""
-    #     net_msg = NetMessage(NetMessage.CMD_ACT, self.__session_id, NetMessage.DEST_ALL, "0")
-    #     self.__send(net_msg)
-
     @staticmethod
     def __unserialize_level(level_string: str) -> Level or None:
         """Crée un niveau à partir d'une chaîne de caractères représentant un niveau."""
