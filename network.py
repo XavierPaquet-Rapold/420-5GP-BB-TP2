@@ -1,7 +1,6 @@
 import socket
 import sys
 import threading
-import random
 
 from queue import Queue
 
@@ -343,7 +342,7 @@ class NetRX(threading.Thread):
 
         while len(data) > 0:
             message = data2message(data)
-            if message == None:
+            if not message:
                 print("ERROR: data doesn't respect length, buffer dropped")
                 break
             if type(message) == NetMessage:
