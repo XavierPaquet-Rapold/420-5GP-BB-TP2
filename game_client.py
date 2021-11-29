@@ -87,7 +87,7 @@ class GameClient:
         self.__network_client.start()
 
     def stop(self) -> None:
-        message = NetMessage(NetMessage.CMD_ACT,
+        message = NetMessage(NetMessage.CMD['active'],
                              self.__session_id, NetMessage.DEST_ALL, "0")
         self.__send(message)
         self.__network_client.stop()

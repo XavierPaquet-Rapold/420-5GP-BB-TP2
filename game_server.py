@@ -29,16 +29,16 @@ class GameServer:
                     message.command, message.source, NetMessage.DEST_ALL, message.data)
                 self.__send_to_all_but_source(net_msg)
             elif message.is_level():
-                self.__players.append("," + message.source)
-                self.send_players_list_to(
-                    message.source, str(self.__players))
+                self.__players.append(message.source)
                 self.send_level_to(message.source, str(game.level))
-                net_msg = NetMessage(NetMessage.CMD_ACT,
+                self.send_players_list_to(
+                    message.source, ",".join(self.__players))
+                net_msg = NetMessage(NetMessage.CMD['active'],
                                      message.source, NetMessage.DEST_ALL, "1")
                 self.__send_to_all_but_source(net_msg)
             elif message.is_active():
                 net_msg = NetMessage(
-                    NetMessage.CMD_ACT, message.source, NetMessage.DEST_ALL, message.data)
+                    NetMessage.CMD['active'], message.source, NetMessage.DEST_ALL, message.data)
                 self.__send_to_all_but_source(net_msg)
                 self.__network_server.close_session_controller(message.source)
 
@@ -58,10 +58,11 @@ class GameServer:
         net_msg = NetMessage(NetMessage.CMD['level'], NetMessage.SRC_SERVER, destination, level)
         self.__send(net_msg)
 
-    def send_players_list_to(self, destination, players: list) -> None:
+    def send_players_list_to(self, destination, players: str) -> None:
         """Envoie une liste de tout les joueurs deja present dans le jeu à un client (destination)."""
-        net_msg = NetMessage(NetMessage.CMD_PLL,
+        net_msg = NetMessage(NetMessage.CMD['players'],
                              NetMessage.SRC_SERVER, destination, players)
+        self.__send(net_msg)
 
     def start(self) -> None:
         self.__network_server.start()

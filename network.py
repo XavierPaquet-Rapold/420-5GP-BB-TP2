@@ -64,10 +64,10 @@ class NetMessage:
         return self.__command == self.CMD['level']
 
     def is_players_list(self) -> bool:
-        return self.__command == self.CMD_PLL
+        return self.__command == self.CMD['players']
 
     def is_active(self) -> bool:
-        return self.__command == self.CMD_ACT
+        return self.__command == self.CMD['active']
 
     def is_position(self) -> bool:
         return self.__command == self.CMD['position']
@@ -340,8 +340,8 @@ class NetServer:
         return self.listener.session_controllers
 
     def close_session_controller(self, session_id: str) -> None:
-        ctrl_index = self.listener.session_controllers.index(session_id)
-        self.listener.session_controllers[ctrl_index].stop()
+        ctrl = self.listener.session_controllers[int(session_id)]
+        ctrl.stop()
 
     def start(self) -> None:
         self.listener.start()
