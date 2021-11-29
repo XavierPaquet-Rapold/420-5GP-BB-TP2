@@ -38,14 +38,14 @@ class GameClient:
 
     def send_level_query(self) -> None:
         """Envoie une demande de niveau."""
-        net_msg = NetMessage(NetMessage.CMD_LVL, self.__session_id, NetMessage.DEST_ALL, '')
+        net_msg = NetMessage(NetMessage.CMD['level'], self.__session_id, NetMessage.DEST_ALL, '')
         self.__send(net_msg)
 
     def send_position(self, position: tuple) -> None:
         """Envoie la position du joueur au serveur."""
         x_str = str(position[0]).zfill(NetMessage.DATA_POS_BYTES)
         y_str = str(position[1]).zfill(NetMessage.DATA_POS_BYTES)
-        net_msg = NetMessage(NetMessage.CMD_POS, self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
+        net_msg = NetMessage(NetMessage.CMD['position'], self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
         self.__send(net_msg)
 
     @staticmethod
