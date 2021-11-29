@@ -55,7 +55,7 @@ class Level:
     def get_tile(self, x, y: int) -> Tile:
         return self.__tiles[y][x]
 
-    def load(self, number: int) -> None:
+    def load(self, number: int) -> bool:
         """Charge un niveau à partir d'un fichier texte."""
 
         self.__number = number
@@ -71,7 +71,7 @@ class Level:
                     for line in level_lines:
                         if line_length != len(line) and line_length != -1:
                             print("Les lignes dans le fichier de niveau ne sont pas de la même longueur")
-                            return
+                            return False
                         line_length = len(line)
                         symbols = line.strip()
                         columns = []
@@ -81,12 +81,14 @@ class Level:
                         self.__tiles.append(columns)
                 else:
                     print("Le niveau contient des caractères non valides")
-                    return
+                    return False
         except FileNotFoundError:
             print("Fichier introuvable : " + filename)
+            return False
 
         self.__width = len(self.__tiles[0])
         self.__height = len(self.__tiles)
+        return True
     
     def __validate_level_characters(self, level_file: str) -> bool:
         allowed = set('\n')

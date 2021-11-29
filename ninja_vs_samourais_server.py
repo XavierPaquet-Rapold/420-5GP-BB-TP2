@@ -10,7 +10,10 @@ SLEEP_TIME = 0.05
 def main(game_server: GameServer) -> None:
     """Programme principal du serveur de Ninja VS Samouraïs."""
     game = Game()
-    game.next_level()
+    level_correct = game.next_level()
+    if not level_correct:
+        server.stop()
+        exit()
 
     while True:
         game_server.handle_messages(game)
