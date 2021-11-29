@@ -1,8 +1,5 @@
 from enum import Enum
 from enum import auto
-from queue import Empty
-
-import arcade
 
 from level import Level
 from players import Ninja

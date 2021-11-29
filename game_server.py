@@ -1,4 +1,3 @@
-from array import array
 from game import Game
 from network import NetMessage
 from network import NetServer
