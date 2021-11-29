@@ -50,21 +50,18 @@ class GameServer:
 
     def send_level(self, level: str) -> None:
         """Envoie un niveau de jeu à tous les clients."""
-        net_msg = NetMessage(NetMessage.CMD_LVL,
-                             NetMessage.SRC_SERVER, NetMessage.DEST_ALL, level)
+        net_msg = NetMessage(NetMessage.CMD['level'], NetMessage.SRC_SERVER, NetMessage.DEST_ALL, level)
         self.__send(net_msg)
 
     def send_level_to(self, destination, level: str) -> None:
         """Envoie un niveau de jeu à un client (destination)."""
-        net_msg = NetMessage(NetMessage.CMD_LVL,
-                             NetMessage.SRC_SERVER, destination, level)
+        net_msg = NetMessage(NetMessage.CMD['level'], NetMessage.SRC_SERVER, destination, level)
         self.__send(net_msg)
 
     def send_players_list_to(self, destination, players: str) -> None:
         """Envoie une liste de tout les joueurs deja present dans le jeu à un client (destination)."""
         net_msg = NetMessage(NetMessage.CMD_PLL,
                              NetMessage.SRC_SERVER, destination, players)
-        self.__send(net_msg)
 
     def start(self) -> None:
         self.__network_server.start()
