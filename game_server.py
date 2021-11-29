@@ -29,7 +29,11 @@ class GameServer:
                 #send to all player is active
                 net_msg = NetMessage(NetMessage.CMD_ACT, message.source, NetMessage.DEST_ALL, "1")
                 self.__send_to_all_but_source(net_msg)
-           
+            elif message.is_active():
+                net_msg = NetMessage(NetMessage.CMD_ACT, message.source, NetMessage.DEST_ALL, message.data)
+                self.__send_to_all_but_source(net_msg)
+                self.__network_server.close_session_controller(message.source)
+
     def get_ip(self) -> str:
         return self.__network_server.get_ip()
 

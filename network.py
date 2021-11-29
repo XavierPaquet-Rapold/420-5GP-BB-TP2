@@ -305,11 +305,16 @@ class NetServer:
     def sessions_controllers(self) -> list:
         return self.listener.session_controllers
 
+    def close_session_controller(self, session_id:str) -> None:
+        ctrl_index = self.listener.session_controllers.index(session_id)
+        self.listener.session_controllers[ctrl_index].stop()
+    
     def start(self) -> None:
         self.listener.start()
 
     def stop(self) -> None:
         self.listener.stop()
+    
 
 
 class NetRX(threading.Thread):
