@@ -8,6 +8,7 @@ from network import NetSettings
 
 class GameClient:
     """Côté client de la couche application de la communication réseau."""
+
     def __init__(self, host: str, port: int = NetSettings.SERVER_PORT) -> None:
         self.__network_client = NetClient(host, port)
         self.__session_id = '99'
@@ -23,11 +24,14 @@ class GameClient:
                 game.update_player_position(player_id, (int(x), int(y)))
             elif message.is_session_id():
                 if message.data.isdigit():
-                    self.__session_id = message.data.zfill(NetMessage.SRC_BYTES)
+                    self.__session_id = message.data.zfill(
+                        NetMessage.SRC_BYTES)
                     player_id = int(self.__session_id)
                     if player_id == 0:
                         game.declare_ninja()
                     game.state = GameState.STARTED
+            elif message.is_players_list():
+                game.update_players_list(message.data)
             elif message.is_level():
                 game.set_level(self.__unserialize_level(message.data))
                 game.state = GameState.LEVEL_RECEIVED
@@ -36,7 +40,6 @@ class GameClient:
                 player_id = int(message.source)
                 is_active = bool(int(msg_Active))
                 game.update_is_active(player_id, is_active)
-              
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""
@@ -44,14 +47,16 @@ class GameClient:
 
     def send_level_query(self) -> None:
         """Envoie une demande de niveau."""
-        net_msg = NetMessage(NetMessage.CMD_LVL, self.__session_id, NetMessage.DEST_ALL, '')
+        net_msg = NetMessage(NetMessage.CMD_LVL,
+                             self.__session_id, NetMessage.DEST_ALL, '')
         self.__send(net_msg)
 
     def send_position(self, position: tuple) -> None:
         """Envoie la position du joueur au serveur."""
         x_str = str(position[0]).zfill(NetMessage.DATA_POS_BYTES)
         y_str = str(position[1]).zfill(NetMessage.DATA_POS_BYTES)
-        net_msg = NetMessage(NetMessage.CMD_POS, self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
+        net_msg = NetMessage(
+            NetMessage.CMD_POS, self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
         self.__send(net_msg)
 
     @staticmethod
@@ -84,6 +89,7 @@ class GameClient:
         self.__network_client.start()
 
     def stop(self) -> None:
-        message = NetMessage(NetMessage.CMD_ACT, self.__session_id, NetMessage.DEST_ALL, "0")
+        message = NetMessage(NetMessage.CMD_ACT,
+                             self.__session_id, NetMessage.DEST_ALL, "0")
         self.__send(message)
         self.__network_client.stop()

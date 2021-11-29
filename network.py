@@ -42,7 +42,8 @@ class NetMessage:
     CMD_SID = 'SID'  # session ID
     CMD_POS = 'POS'  # position
     CMD_LVL = 'LVL'  # level
-    CMD_ACT = 'ACT' #active
+    CMD_ACT = 'ACT'  # new player active
+    CMD_PLL = 'PLL'  # old players list
 
     DATA_POS_BYTES = 3
 
@@ -65,7 +66,10 @@ class NetMessage:
 
     def is_level(self) -> bool:
         return self.__command == self.CMD_LVL
-    
+
+    def is_players_list(self) -> bool:
+        return self.__command == self.CMD_PLL
+
     def is_active(self) -> bool:
         return self.__command == self.CMD_ACT
 
@@ -95,7 +99,9 @@ class NetMessage:
 def message2data(message: NetMessage) -> str:
     """Transforme un message en une chaîne de caractères (COMMAND|DATA LENGTH|DATA) à transmettre sur le réseau."""
     return message.command + message.source + \
-        message.destination + str(len(message.data)).zfill(NetMessage.DATA_LENGTH_BYTES) + message.data
+        message.destination + \
+        str(len(message.data)).zfill(
+            NetMessage.DATA_LENGTH_BYTES) + message.data
 
 
 def data2message(string: str) -> NetMessage:
@@ -103,20 +109,24 @@ def data2message(string: str) -> NetMessage:
     if len(string) < NetMessage.HEADER_BYTES:
         raise Exception
 
-    src = string[NetMessage.SRC_OFFSET:NetMessage.SRC_OFFSET+NetMessage.SRC_BYTES]
+    src = string[NetMessage.SRC_OFFSET:NetMessage.SRC_OFFSET +
+                 NetMessage.SRC_BYTES]
     if not src.isdigit():
         raise Exception
 
-    dest = string[NetMessage.DEST_OFFSET:NetMessage.DEST_OFFSET+NetMessage.DEST_BYTES]
+    dest = string[NetMessage.DEST_OFFSET:NetMessage.DEST_OFFSET +
+                  NetMessage.DEST_BYTES]
     if not dest.isdigit():
         raise Exception
 
-    data_length_str = string[NetMessage.DATA_LENGTH_OFFSET:NetMessage.DATA_LENGTH_OFFSET+NetMessage.DATA_LENGTH_BYTES]
+    data_length_str = string[NetMessage.DATA_LENGTH_OFFSET:
+                             NetMessage.DATA_LENGTH_OFFSET+NetMessage.DATA_LENGTH_BYTES]
     if not data_length_str.isdigit():
         raise Exception
     data_length = int(data_length_str)
 
-    cmd = string[NetMessage.CMD_OFFSET:NetMessage.CMD_OFFSET+NetMessage.CMD_BYTES]
+    cmd = string[NetMessage.CMD_OFFSET:NetMessage.CMD_OFFSET +
+                 NetMessage.CMD_BYTES]
     data = string[NetMessage.DATA_OFFSET:NetMessage.DATA_OFFSET+data_length]
 
     return NetMessage(cmd, src, dest, data)
@@ -124,6 +134,7 @@ def data2message(string: str) -> NetMessage:
 
 class NetSessionController:
     """Gère les tâches RX et TX d'une session TCP/IP."""
+
     def __init__(self, client_socket: socket.socket) -> None:
         self.tx_queue = Queue(maxsize=MAX_TX_QSIZE)
         self.rx_queue = Queue(maxsize=MAX_RX_QSIZE)
@@ -154,6 +165,7 @@ class NetSessionController:
 
 class NetClient:
     """Client d'une session TCP/IP. Couche présentation de la communication réseau."""
+
     def __init__(self, host: str = NetSettings.SERVER_HOST, port: int = NetSettings.SERVER_PORT) -> None:
 
         print(f"Connecting to {host} on port {port}...")
@@ -193,6 +205,7 @@ class NetClient:
 
 class NetListener(threading.Thread):
     """Écoute pour de nouvelles connexions au serveur. Crée les sessions."""
+
     def __init__(self, server_socket: socket.socket,
                  host: str = NetSettings.SERVER_HOST, port: int = NetSettings.SERVER_PORT) -> None:
         super().__init__()
@@ -232,7 +245,8 @@ class NetListener(threading.Thread):
 
             self.session_controllers.append(session_controller)
             self.__send_session_id(session_controller, session_id)
-            print(f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
+            print(
+                f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
             session_id += 1
 
         self.server_socket.close()
@@ -247,7 +261,8 @@ class NetServer:
     def __init__(self, host: str = NetSettings.SERVER_HOST, port: int = NetSettings.SERVER_PORT) -> None:
         print("Starting server...")
 
-        self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__server_socket = socket.socket(
+            socket.AF_INET, socket.SOCK_STREAM)
 
         try:
             self.__server_socket.bind((host, port))
@@ -305,20 +320,20 @@ class NetServer:
     def sessions_controllers(self) -> list:
         return self.listener.session_controllers
 
-    def close_session_controller(self, session_id:str) -> None:
+    def close_session_controller(self, session_id: str) -> None:
         ctrl_index = self.listener.session_controllers.index(session_id)
         self.listener.session_controllers[ctrl_index].stop()
-    
+
     def start(self) -> None:
         self.listener.start()
 
     def stop(self) -> None:
         self.listener.stop()
-    
 
 
 class NetRX(threading.Thread):
     """Tâche de réception des messages en provenance du réseau."""
+
     def __init__(self, session_socket: socket.socket, session_controller: NetSessionController) -> None:
         super().__init__()
 
@@ -366,6 +381,7 @@ class NetRX(threading.Thread):
 
 class NetTX(threading.Thread):
     """Tâche de transmission des messages vers le réseau."""
+
     def __init__(self, session_socket: socket.socket, session_controller: NetSessionController) -> None:
         super().__init__()
 
