@@ -1,3 +1,5 @@
 *.pdf
 *.pyc
+.idea/
+.vscode/
 livrables.txt

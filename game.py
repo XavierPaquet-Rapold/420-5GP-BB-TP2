@@ -11,6 +11,8 @@ class GameState(Enum):
     STARTED = auto(),
     WAITING_LEVEL = auto(),
     LEVEL_RECEIVED = auto(),
+    WAITING_PLAYERS_LIST = auto(),
+    PLAYERS_LIST_RECEIVED = auto(),
     PLAYING_LEVEL = auto()
 
 
@@ -101,6 +103,3 @@ class Game:
     @state.setter
     def state(self, state) -> None:
         self.__state = state
-
-
-

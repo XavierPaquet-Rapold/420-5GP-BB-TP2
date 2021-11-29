@@ -39,7 +39,8 @@ class NetMessage:
     DATA_LENGTH_OFFSET = DEST_OFFSET + DEST_BYTES
     DATA_OFFSET = HEADER_BYTES
 
-    CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL', 'active':'ACT', 'players':'PLL'}
+    CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL',
+           'active': 'ACT', 'players': 'PLL', 'close': 'CLO'}
 
     DATA_POS_BYTES = 3
 
@@ -74,6 +75,9 @@ class NetMessage:
 
     def is_session_id(self) -> bool:
         return self.__command == self.CMD['sessionID']
+
+    def is_session_close(self) -> bool:
+        return self.__command == self.CMD['close']
 
     @property
     def command(self) -> str:
@@ -124,7 +128,8 @@ def data2message(string: str) -> NetMessage:
     if len(string) < NetMessage.HEADER_BYTES + data_length:
         return
 
-    cmd = string[NetMessage.CMD_OFFSET:NetMessage.CMD_OFFSET+NetMessage.CMD_BYTES]
+    cmd = string[NetMessage.CMD_OFFSET:NetMessage.CMD_OFFSET +
+                 NetMessage.CMD_BYTES]
     if not cmd.isalpha():
         return len(string)
 
@@ -211,6 +216,7 @@ class NetClient:
 
     def stop(self) -> None:
         self.session_ctrl.stop()
+        print("Client diconnected from server")
 
 
 class NetListener(threading.Thread):
@@ -342,6 +348,7 @@ class NetServer:
     def close_session_controller(self, session_id: str) -> None:
         ctrl = self.listener.session_controllers[int(session_id)]
         ctrl.stop()
+        print(f"Client {int(session_id)} disconnected from server")
 
     def start(self) -> None:
         self.listener.start()

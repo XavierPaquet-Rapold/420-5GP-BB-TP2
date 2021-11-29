@@ -212,7 +212,8 @@ class NinjaVSSamourais(arcade.Window):
             player = game.get_current_player()
             pv_max = player.pv_max_ninja
             pv = player.pv_ninja
-        arcade.draw_rectangle_filled(0, 0, HUD_WIDTH, HUD_HEIGHT, arcade.color.JAPANESE_VIOLET)
+        arcade.draw_rectangle_filled(
+            0, 0, HUD_WIDTH, HUD_HEIGHT, arcade.color.JAPANESE_VIOLET)
 
         arcade.draw_rectangle_outline(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, pv_max * HEALTH_BAR_MULTIPLICATOR,
                                       HEALTH_BAR_HEIGHT, arcade.color.RED)
@@ -267,10 +268,10 @@ class NinjaVSSamourais(arcade.Window):
             self.__game_client.send_level_query()
         elif self.__game.state == GameState.LEVEL_RECEIVED:
             self.__build_gui_from_game_level()
+            self.__game.state = GameState.WAITING_PLAYERS_LIST
+            self.__game_client.send_players_list_query()
+        elif self.__game.state == GameState.PLAYERS_LIST_RECEIVED:
             self.__game.state = GameState.PLAYING_LEVEL
-            # player_index = self.__game_client.who_am_i()
-            # myself = self.__game.get_player(player_index)
-            # myself.player_active = True
         elif self.__game.state == GameState.PLAYING_LEVEL:
             self.__time_since_last_move += delta_time
 

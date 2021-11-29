@@ -30,12 +30,13 @@ class GameClient:
                     if player_id == 0:
                         game.declare_ninja()
                     game.state = GameState.STARTED
-            elif message.is_players_list():
-                game.update_players_list(message.data)
             elif message.is_level():
                 game.set_level(self.__unserialize_level(message.data))
                 game.state = GameState.LEVEL_RECEIVED
-            elif message.is_active():
+            elif message.is_players_list():
+                game.update_players_list(message.data)
+                game.state = GameState.PLAYERS_LIST_RECEIVED
+            elif message.is_active() or message.is_session_close():
                 msg_Active = message.data
                 player_id = int(message.source)
                 is_active = bool(int(msg_Active))
@@ -47,14 +48,22 @@ class GameClient:
 
     def send_level_query(self) -> None:
         """Envoie une demande de niveau."""
-        net_msg = NetMessage(NetMessage.CMD['level'], self.__session_id, NetMessage.DEST_ALL, '')
+        net_msg = NetMessage(
+            NetMessage.CMD['level'], self.__session_id, NetMessage.DEST_ALL, '')
+        self.__send(net_msg)
+
+    def send_players_list_query(self) -> None:
+        """Envoie une demande de la liste des joueurs deja present dans le jeu."""
+        net_msg = NetMessage(
+            NetMessage.CMD['active'], self.__session_id, NetMessage.DEST_ALL, '')
         self.__send(net_msg)
 
     def send_position(self, position: tuple) -> None:
         """Envoie la position du joueur au serveur."""
         x_str = str(position[0]).zfill(NetMessage.DATA_POS_BYTES)
         y_str = str(position[1]).zfill(NetMessage.DATA_POS_BYTES)
-        net_msg = NetMessage(NetMessage.CMD['position'], self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
+        net_msg = NetMessage(
+            NetMessage.CMD['position'], self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
         self.__send(net_msg)
 
     @staticmethod
@@ -87,7 +96,7 @@ class GameClient:
         self.__network_client.start()
 
     def stop(self) -> None:
-        message = NetMessage(NetMessage.CMD['active'],
-                             self.__session_id, NetMessage.DEST_ALL, "0")
+        message = NetMessage(NetMessage.CMD['close'],
+                             self.__session_id, NetMessage.DEST_ALL, '0')
         self.__send(message)
         self.__network_client.stop()
