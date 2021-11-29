@@ -222,7 +222,6 @@ class NetListener(threading.Thread):
         return self.session_controllers[session_id]
 
     def run(self) -> None:
-
         self.server_socket.listen(LISTEN_QUEUE)
 
         session_id = 0
@@ -376,6 +375,7 @@ class NetRX(threading.Thread):
             except OSError:
                 print("ERROR: Connection with server interrupted.")
                 break
+
         self.session_socket.close()
 
     def stop(self) -> None:
