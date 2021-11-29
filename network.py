@@ -39,7 +39,7 @@ class NetMessage:
     DATA_LENGTH_OFFSET = DEST_OFFSET + DEST_BYTES
     DATA_OFFSET = HEADER_BYTES
 
-    CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL'}
+    CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL', 'active':'ACT', 'players':'PLL'}
 
     DATA_POS_BYTES = 3
 
@@ -62,6 +62,12 @@ class NetMessage:
 
     def is_level(self) -> bool:
         return self.__command == self.CMD['level']
+
+    def is_players_list(self) -> bool:
+        return self.__command == self.CMD['players']
+
+    def is_active(self) -> bool:
+        return self.__command == self.CMD['active']
 
     def is_position(self) -> bool:
         return self.__command == self.CMD['position']
@@ -332,6 +338,10 @@ class NetServer:
 
     def sessions_controllers(self) -> list:
         return self.listener.session_controllers
+
+    def close_session_controller(self, session_id: str) -> None:
+        ctrl = self.listener.session_controllers[int(session_id)]
+        ctrl.stop()
 
     def start(self) -> None:
         self.listener.start()

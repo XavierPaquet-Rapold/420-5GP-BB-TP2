@@ -108,67 +108,68 @@ class NinjaVSSamourais(arcade.Window):
     @staticmethod
     def __draw_samourais(game: Game) -> None:
         """Dessine les samouraïs."""
-        for i in range(1, 7):
-            samourai = game.get_player(i)
-            drawing_settings = {
-                "offset_x": 5,
-                "offset_y": 5,
-                "body_width": 8,
-                "body_height": 8,
-                "body_color": Samourai.COLORS[i - 1],
-                "bandanna_1_center_x": 0,
-                "bandanna_1_center_y": 3,
-                "bandanna_1_width": 0,
-                "bandanna_1_height": 1,
-                "bandanna_2_center_x": 0,
-                "bandanna_2_center_y": 4,
-                "bandanna_2_width": 2,
-                "bandanna_2_height": 2,
-                "bandanna_color": (0, 0, 0)
-            }
+        list_of_players = game.get_all_players()
 
-            arcade.draw_rectangle_filled(drawing_settings["offset_x"] + samourai.position[0] * BLOCK_UNIT,
-                                         SCREEN_HEIGHT -
-                                         (drawing_settings["offset_y"] +
-                                          samourai.position[1] * BLOCK_UNIT),
-                                         drawing_settings["body_width"], drawing_settings["body_height"],
-                                         drawing_settings["body_color"])
+        for samourai in list_of_players:
+            ninja = list_of_players[0]
 
-            if samourai.facing_south:
-                drawing_settings.update({
-                    "bandanna_1_center_x": 5,
-                    "bandanna_1_width": 8,
-                    "bandanna_2_center_x": 5
-                })
-            elif samourai.facing_east:
-                drawing_settings.update({
-                    "bandanna_1_center_x": 7,
-                    "bandanna_1_width": 6,
-                    "bandanna_2_center_x": 8
-                })
-            else:
-                drawing_settings.update({
-                    "bandanna_1_center_x": 3,
-                    "bandanna_1_width": 6,
-                    "bandanna_2_center_x": 2
-                })
+            if samourai != ninja and samourai.player_active:  # si le joueur n'est pas un ninja et il est actif
+                index = list_of_players.index(samourai)
+                drawing_settings = {
+                    "offset_x": 5,
+                    "offset_y": 5,
+                    "body_width": 8,
+                    "body_height": 8,
+                    "body_color": Samourai.COLORS[index - 1],
+                    "bandanna_1_center_x": 0,
+                    "bandanna_1_center_y": 3,
+                    "bandanna_1_width": 0,
+                    "bandanna_1_height": 1,
+                    "bandanna_2_center_x": 0,
+                    "bandanna_2_center_y": 4,
+                    "bandanna_2_width": 2,
+                    "bandanna_2_height": 2,
+                    "bandanna_color": (0, 0, 0)
+                }
+                index = index + 1
 
-            if not samourai.facing_north:
-                arcade.draw_rectangle_filled(
-                    drawing_settings["bandanna_1_center_x"] + samourai.position[0] * BLOCK_UNIT,
-                    SCREEN_HEIGHT -
-                    (drawing_settings["bandanna_1_center_y"] +
-                     samourai.position[1] * BLOCK_UNIT),
-                    drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"],
-                    drawing_settings["bandanna_color"])
+                arcade.draw_rectangle_filled(drawing_settings["offset_x"] + samourai.position[0] * BLOCK_UNIT,
+                                             SCREEN_HEIGHT -
+                                             (drawing_settings["offset_y"] +
+                                             samourai.position[1] * BLOCK_UNIT),
+                                             drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
 
-                arcade.draw_rectangle_filled(
-                    drawing_settings["bandanna_2_center_x"] + samourai.position[0] * BLOCK_UNIT,
-                    SCREEN_HEIGHT -
-                    (drawing_settings["bandanna_2_center_y"] +
-                     samourai.position[1] * BLOCK_UNIT),
-                    drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"],
-                    drawing_settings["bandanna_color"])
+                if samourai.facing_south:
+                    drawing_settings.update({
+                        "bandanna_1_center_x": 5,
+                        "bandanna_1_width": 8,
+                        "bandanna_2_center_x": 5
+                    })
+                elif samourai.facing_east:
+                    drawing_settings.update({
+                        "bandanna_1_center_x": 7,
+                        "bandanna_1_width": 6,
+                        "bandanna_2_center_x": 8
+                    })
+                else:
+                    drawing_settings.update({
+                        "bandanna_1_center_x": 3,
+                        "bandanna_1_width": 6,
+                        "bandanna_2_center_x": 2
+                    })
+
+                if not samourai.facing_north:
+                    arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + samourai.position[0] * BLOCK_UNIT,
+                                                 SCREEN_HEIGHT -
+                                                 (drawing_settings["bandanna_1_center_y"] +
+                                                 samourai.position[1] * BLOCK_UNIT),
+                                                 drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"], drawing_settings["bandanna_color"])
+
+                    arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + samourai.position[0] * BLOCK_UNIT,
+                                                 SCREEN_HEIGHT -
+                                                 (drawing_settings["bandanna_2_center_y"] +
+                                                 samourai.position[1] * BLOCK_UNIT),
+                                                 drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"], drawing_settings["bandanna_color"])
 
     @staticmethod
     def __draw_viewing_region(game: Game) -> bool:
@@ -267,6 +268,9 @@ class NinjaVSSamourais(arcade.Window):
         elif self.__game.state == GameState.LEVEL_RECEIVED:
             self.__build_gui_from_game_level()
             self.__game.state = GameState.PLAYING_LEVEL
+            # player_index = self.__game_client.who_am_i()
+            # myself = self.__game.get_player(player_index)
+            # myself.player_active = True
         elif self.__game.state == GameState.PLAYING_LEVEL:
             self.__time_since_last_move += delta_time
 
@@ -283,6 +287,5 @@ class NinjaVSSamourais(arcade.Window):
                     dispatch_position = myself.move_west(self.__game.level)
                 if self.__moving_east:
                     dispatch_position = myself.move_east(self.__game.level)
-
                 if dispatch_position:
                     self.__game_client.send_position(myself.position)

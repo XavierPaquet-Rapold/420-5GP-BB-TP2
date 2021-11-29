@@ -8,6 +8,7 @@ from network import NetSettings
 
 class GameClient:
     """Côté client de la couche application de la communication réseau."""
+
     def __init__(self, host: str, port: int = NetSettings.SERVER_PORT) -> None:
         self.__network_client = NetClient(host, port)
         self.__session_id = '99'
@@ -23,14 +24,22 @@ class GameClient:
                 game.update_player_position(player_id, (int(x), int(y)))
             elif message.is_session_id():
                 if message.data.isdigit():
-                    self.__session_id = message.data.zfill(NetMessage.SRC_BYTES)
+                    self.__session_id = message.data.zfill(
+                        NetMessage.SRC_BYTES)
                     player_id = int(self.__session_id)
                     if player_id == 0:
                         game.declare_ninja()
                     game.state = GameState.STARTED
+            elif message.is_players_list():
+                game.update_players_list(message.data)
             elif message.is_level():
                 game.set_level(self.__unserialize_level(message.data))
                 game.state = GameState.LEVEL_RECEIVED
+            elif message.is_active():
+                msg_Active = message.data
+                player_id = int(message.source)
+                is_active = bool(int(msg_Active))
+                game.update_is_active(player_id, is_active)
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""
@@ -78,4 +87,7 @@ class GameClient:
         self.__network_client.start()
 
     def stop(self) -> None:
+        message = NetMessage(NetMessage.CMD['active'],
+                             self.__session_id, NetMessage.DEST_ALL, "0")
+        self.__send(message)
         self.__network_client.stop()

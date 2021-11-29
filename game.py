@@ -1,5 +1,6 @@
 from enum import Enum
 from enum import auto
+from queue import Empty
 
 import arcade
 
@@ -18,6 +19,7 @@ class GameState(Enum):
 
 class Game:
     """Données relatives à la partie en cours."""
+
     def __init__(self) -> None:
         self.__level_number = 0
         self.__level = None
@@ -31,9 +33,11 @@ class Game:
     def __create_ninja_and_samourais(self):
         """Instancie le ninja et les samouraïs."""
         player_positions = self.level.get_starting_positions()
-        self.__players.append(Ninja(player_positions[0]['x'], player_positions[0]['y']))
+        self.__players.append(
+            Ninja(player_positions[0]['x'], player_positions[0]['y']))
         for i in range(6):
-            self.__players.append(Samourai(player_positions[i+1]['x'], player_positions[i+1]['y']))
+            self.__players.append(
+                Samourai(player_positions[i+1]['x'], player_positions[i+1]['y']))
 
     def i_am_the_ninja(self) -> bool:
         return self.__player_is_ninja
@@ -41,7 +45,7 @@ class Game:
     def declare_ninja(self) -> None:
         self.__player_is_ninja = True
 
-    def get_current_player(self):
+    def get_current_player(self) -> int:
         return self.__players[self.player_id]
 
     def get_ninja(self) -> Ninja:
@@ -49,6 +53,9 @@ class Game:
 
     def get_player(self, player_id: int):
         return self.__players[player_id]
+
+    def get_all_players(self) -> list:
+        return self.__players
 
     def next_level(self) -> bool:
         self.__level_number += 1
@@ -63,9 +70,20 @@ class Game:
         self.__level = level
         self.__create_ninja_and_samourais()
 
+    def update_players_list(self, current_players: str) -> None:
+        if current_players:
+            current_players = list(current_players.split(","))
+            for id in current_players:
+                player = self.__players[int(id)]
+                player.player_active = True
+
     def update_player_position(self, player_id: int, position: tuple) -> None:
         player = self.__players[player_id]
         player.position = position
+
+    def update_is_active(self, player_id: int, is_active: bool) -> None:
+        player = self.__players[player_id]
+        player.player_active = is_active
 
     @property
     def level(self) -> Level or None:
