@@ -1,7 +1,7 @@
 import socket
 import sys
 import threading
-
+import random
 
 from queue import Queue
 
@@ -39,9 +39,7 @@ class NetMessage:
     DATA_LENGTH_OFFSET = DEST_OFFSET + DEST_BYTES
     DATA_OFFSET = HEADER_BYTES
 
-    CMD_SID = 'SID'  # session ID
-    CMD_POS = 'POS'  # position
-    CMD_LVL = 'LVL'  # level
+    CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL'}
 
     DATA_POS_BYTES = 3
 
@@ -63,13 +61,13 @@ class NetMessage:
         return NetMessage(self.command, self.source, self.destination, self.data)
 
     def is_level(self) -> bool:
-        return self.__command == self.CMD_LVL
+        return self.__command == self.CMD['level']
 
     def is_position(self) -> bool:
-        return self.__command == self.CMD_POS
+        return self.__command == self.CMD['position']
 
     def is_session_id(self) -> bool:
-        return self.__command == self.CMD_SID
+        return self.__command == self.CMD['sessionID']
 
     @property
     def command(self) -> str:
@@ -97,22 +95,37 @@ def message2data(message: NetMessage) -> str:
 def data2message(string: str) -> NetMessage:
     """Transforme une chaîne de caractères (COMMAND|DATA LENGTH|DATA) reçue du réseau en message."""
     if len(string) < NetMessage.HEADER_BYTES:
-        raise Exception
+        return
 
     src = string[NetMessage.SRC_OFFSET:NetMessage.SRC_OFFSET+NetMessage.SRC_BYTES]
     if not src.isdigit():
-        raise Exception
+        return len(string)
 
     dest = string[NetMessage.DEST_OFFSET:NetMessage.DEST_OFFSET+NetMessage.DEST_BYTES]
     if not dest.isdigit():
-        raise Exception
+        return len(string)
 
     data_length_str = string[NetMessage.DATA_LENGTH_OFFSET:NetMessage.DATA_LENGTH_OFFSET+NetMessage.DATA_LENGTH_BYTES]
     if not data_length_str.isdigit():
-        raise Exception
+        return len(string)
     data_length = int(data_length_str)
 
+    if len(string) < NetMessage.HEADER_BYTES + data_length:
+        return
+
     cmd = string[NetMessage.CMD_OFFSET:NetMessage.CMD_OFFSET+NetMessage.CMD_BYTES]
+    if not cmd.isalpha():
+        return len(string)
+
+    net_command = NetMessage.CMD
+    is_command = False
+    for command in net_command.values():
+        if command == cmd:
+            is_command = True
+            break
+    if not is_command:
+        return len(string)
+
     data = string[NetMessage.DATA_OFFSET:NetMessage.DATA_OFFSET+data_length]
 
     return NetMessage(cmd, src, dest, data)
@@ -203,7 +216,7 @@ class NetListener(threading.Thread):
 
     @staticmethod
     def __send_session_id(ctrl: NetSessionController, session_id: int) -> None:
-        ctrl.write(NetMessage(NetMessage.CMD_SID,
+        ctrl.write(NetMessage(NetMessage.CMD['sessionID'],
                               NetMessage.SRC_SERVER,
                               str(session_id).zfill(NetMessage.SRC_BYTES),
                               str(session_id)))
@@ -330,8 +343,15 @@ class NetRX(threading.Thread):
 
         while len(data) > 0:
             message = data2message(data)
-            messages.append(message)
-            data = data[NetMessage.HEADER_BYTES+len(message.data):]
+            if message == None:
+                print("ERROR: data doesn't respect length, buffer dropped")
+                break
+            if type(message) == NetMessage:
+                data = data[NetMessage.HEADER_BYTES+len(message.data):]
+                messages.append(message)
+            else:
+                data = data[message:]
+                print("ERROR: bad data type, message dropped")
 
         return messages
 
