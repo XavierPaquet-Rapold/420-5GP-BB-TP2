@@ -1,8 +1,9 @@
+import select
 import socket
 import sys
 import threading
 
-from queue import Queue
+from queue import Empty, Queue
 
 
 MAX_RX_QSIZE = 10
@@ -88,7 +89,9 @@ class NetMessage:
 def message2data(message: NetMessage) -> str:
     """Transforme un message en une chaîne de caractères (COMMAND|DATA LENGTH|DATA) à transmettre sur le réseau."""
     return message.command + message.source + \
-        message.destination + str(len(message.data)).zfill(NetMessage.DATA_LENGTH_BYTES) + message.data
+        message.destination + \
+        str(len(message.data)).zfill(
+            NetMessage.DATA_LENGTH_BYTES) + message.data
 
 
 def data2message(string: str) -> NetMessage:
@@ -96,15 +99,18 @@ def data2message(string: str) -> NetMessage:
     if len(string) < NetMessage.HEADER_BYTES:
         return
 
-    src = string[NetMessage.SRC_OFFSET:NetMessage.SRC_OFFSET+NetMessage.SRC_BYTES]
+    src = string[NetMessage.SRC_OFFSET:NetMessage.SRC_OFFSET +
+                 NetMessage.SRC_BYTES]
     if not src.isdigit():
         return len(string)
 
-    dest = string[NetMessage.DEST_OFFSET:NetMessage.DEST_OFFSET+NetMessage.DEST_BYTES]
+    dest = string[NetMessage.DEST_OFFSET:NetMessage.DEST_OFFSET +
+                  NetMessage.DEST_BYTES]
     if not dest.isdigit():
         return len(string)
 
-    data_length_str = string[NetMessage.DATA_LENGTH_OFFSET:NetMessage.DATA_LENGTH_OFFSET+NetMessage.DATA_LENGTH_BYTES]
+    data_length_str = string[NetMessage.DATA_LENGTH_OFFSET:
+                             NetMessage.DATA_LENGTH_OFFSET+NetMessage.DATA_LENGTH_BYTES]
     if not data_length_str.isdigit():
         return len(string)
     data_length = int(data_length_str)
@@ -132,6 +138,7 @@ def data2message(string: str) -> NetMessage:
 
 class NetSessionController:
     """Gère les tâches RX et TX d'une session TCP/IP."""
+
     def __init__(self, client_socket: socket.socket) -> None:
         self.tx_queue = Queue(maxsize=MAX_TX_QSIZE)
         self.rx_queue = Queue(maxsize=MAX_RX_QSIZE)
@@ -162,6 +169,7 @@ class NetSessionController:
 
 class NetClient:
     """Client d'une session TCP/IP. Couche présentation de la communication réseau."""
+
     def __init__(self, host: str = NetSettings.SERVER_HOST, port: int = NetSettings.SERVER_PORT) -> None:
 
         print(f"Connecting to {host} on port {port}...")
@@ -201,6 +209,7 @@ class NetClient:
 
 class NetListener(threading.Thread):
     """Écoute pour de nouvelles connexions au serveur. Crée les sessions."""
+
     def __init__(self, server_socket: socket.socket,
                  host: str = NetSettings.SERVER_HOST, port: int = NetSettings.SERVER_PORT) -> None:
         super().__init__()
@@ -224,7 +233,6 @@ class NetListener(threading.Thread):
         return self.session_controllers[session_id]
 
     def run(self) -> None:
-
         self.server_socket.listen(LISTEN_QUEUE)
 
         session_id = 0
@@ -232,21 +240,30 @@ class NetListener(threading.Thread):
         self.running = True
 
         while self.running:
-            client_socket, ip_address = self.server_socket.accept()
+            try:
+                readable, _, _ = select.select(
+                    [self.server_socket], [], [], 0.1)
+                for _ in readable:
+                    client_socket, ip_address = self.server_socket.accept()
 
-            # On crée un contrôleur pour servir cette session client...
-            session_controller = NetSessionController(client_socket)
-            session_controller.start()
+                    # On crée un contrôleur pour servir cette session client...
+                    session_controller = NetSessionController(
+                        client_socket)
+                    session_controller.start()
 
-            self.session_controllers.append(session_controller)
-            self.__send_session_id(session_controller, session_id)
-            print(f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
-            session_id += 1
-
-        self.server_socket.close()
+                    self.session_controllers.append(session_controller)
+                    self.__send_session_id(session_controller, session_id)
+                    print(
+                        f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
+                    session_id += 1
+            except OSError:
+                break
 
     def stop(self) -> None:
+        for ctrl in self.session_controllers:
+            ctrl.stop()
         self.running = False
+        print("Server closed")
 
 
 class NetServer:
@@ -255,7 +272,10 @@ class NetServer:
     def __init__(self, host: str = NetSettings.SERVER_HOST, port: int = NetSettings.SERVER_PORT) -> None:
         print("Starting server...")
 
-        self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__server_socket = socket.socket(
+            socket.AF_INET, socket.SOCK_STREAM)
+
+        self.__server_socket.setblocking(False)
 
         try:
             self.__server_socket.bind((host, port))
@@ -322,10 +342,12 @@ class NetServer:
 
 class NetRX(threading.Thread):
     """Tâche de réception des messages en provenance du réseau."""
+
     def __init__(self, session_socket: socket.socket, session_controller: NetSessionController) -> None:
         super().__init__()
 
         self.session_socket = session_socket
+        self.session_socket.setblocking(False)
         self.session_controller = session_controller
 
         self.running = False
@@ -359,14 +381,18 @@ class NetRX(threading.Thread):
 
         while self.running:
             try:
-                raw_data = self.session_socket.recv(4096)
-                data = raw_data.decode()
+                readable, _, _ = select.select(
+                    [self.session_socket], [], [], 0.1)
+                for s in readable:
+                    if s == self.session_socket:
+                        raw_data = self.session_socket.recv(4096)
+                    if raw_data:
+                        data = raw_data.decode()
+                        messages = self.__split(data)
+                        self.__queue(messages)
             except OSError:
                 print("ERROR: Connection with server interrupted.")
                 break
-
-            messages = self.__split(data)
-            self.__queue(messages)
 
         self.session_socket.close()
 
@@ -376,6 +402,7 @@ class NetRX(threading.Thread):
 
 class NetTX(threading.Thread):
     """Tâche de transmission des messages vers le réseau."""
+
     def __init__(self, session_socket: socket.socket, session_controller: NetSessionController) -> None:
         super().__init__()
 
@@ -386,12 +413,15 @@ class NetTX(threading.Thread):
 
     def run(self) -> None:
         self.running = True
+
         while self.running:
             if self.session_controller.tx_queue.not_empty:
-                message = self.session_controller.tx_queue.get()
                 try:
+                    message = self.session_controller.tx_queue.get(timeout=0.1)
                     data = message2data(message)
                     self.session_socket.send(data.encode())
+                except Empty:
+                    continue
                 except OSError:
                     break
 
