@@ -32,10 +32,11 @@ class GameClient:
                 game.set_level(self.__unserialize_level(message.data))
                 game.state = GameState.LEVEL_RECEIVED
             elif message.is_active():
-                active = message.data
-                if active == "True":
+                msg_Active = message.data
+                if msg_Active == "1":
                     player_id = int(message.source)
-                    game.update_is_active(player_id)
+                    is_active = bool(int(msg_Active))
+                    game.update_is_active(player_id, is_active)
                     
 
 

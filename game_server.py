@@ -27,7 +27,7 @@ class GameServer:
             elif message.is_level():
                 self.send_level_to(message.source, str(game.level))
                 #send to all player is active
-                net_msg = NetMessage(NetMessage.CMD_ACT, message.source, NetMessage.DEST_ALL, "True")
+                net_msg = NetMessage(NetMessage.CMD_ACT, message.source, NetMessage.DEST_ALL, "1")
                 self.__send_to_all_but_source(net_msg)
            
     def get_ip(self) -> str:
@@ -45,8 +45,6 @@ class GameServer:
         """Envoie un niveau de jeu à un client (destination)."""
         net_msg = NetMessage(NetMessage.CMD_LVL, NetMessage.SRC_SERVER, destination, level)
         self.__send(net_msg)
-
-    #def send_active_to_all
 
     def start(self) -> None:
         self.__network_server.start()

@@ -66,9 +66,9 @@ class Game:
         player = self.__players[player_id]
         player.position = position
     
-    def update_is_active(self, player_id: int) -> None:
+    def update_is_active(self, player_id: int, active:bool) -> None:
         player = self.__players[player_id]
-        player.player_active = True
+        player.player_active = active
 
     @property
     def level(self) -> Level or None:

@@ -259,8 +259,5 @@ class NinjaVSSamourais(arcade.Window):
                     dispatch_position = myself.move_west(self.__game.level)
                 if self.__moving_east:
                     dispatch_position = myself.move_east(self.__game.level)
-               # if myself.is_active:
-                    #self.__draw_samourais
-
                 if dispatch_position:
                     self.__game_client.send_position(myself.position)
