@@ -1,6 +1,7 @@
 from enum import Enum
 from enum import auto
 
+import arcade
 
 from level import Level
 from players import Ninja
@@ -85,3 +86,6 @@ class Game:
     @state.setter
     def state(self, state) -> None:
         self.__state = state
+
+
+
