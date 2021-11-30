@@ -104,7 +104,7 @@ def message2data(message: NetMessage) -> str:
             NetMessage.DATA_LENGTH_BYTES) + message.data
 
 
-def data2message(string: str) -> NetMessage:
+def data2message(string: str) -> NetMessage or int or None:
     """Transforme une chaîne de caractères (COMMAND|DATA LENGTH|DATA) reçue du réseau en message."""
     if len(string) < NetMessage.HEADER_BYTES:
         return
@@ -130,16 +130,9 @@ def data2message(string: str) -> NetMessage:
 
     cmd = string[NetMessage.CMD_OFFSET:NetMessage.CMD_OFFSET +
                  NetMessage.CMD_BYTES]
-    if not cmd.isalpha():
-        return len(string)
 
     net_command = NetMessage.CMD
-    is_command = False
-    for command in net_command.values():
-        if command == cmd:
-            is_command = True
-            break
-    if not is_command:
+    if not cmd in net_command.values():
         return len(string)
 
     data = string[NetMessage.DATA_OFFSET:NetMessage.DATA_OFFSET+data_length]

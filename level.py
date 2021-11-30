@@ -65,12 +65,12 @@ class Level:
             with open(filename, "r") as level_file:
                 level_str = level_file.read()
                 valid_characters = self.__validate_level_characters(level_str)
-                line_length = -1
                 if valid_characters:
                     level_lines = level_str.splitlines()
+                    line_length = len(level_lines[0])
                     for line in level_lines:
-                        if line_length != len(line) and line_length != -1:
-                            print("Les lignes dans le fichier de niveau ne sont pas de la même longueur")
+                        if line_length != len(line):
+                            print("The lines in the level file are not the same length")
                             return False
                         line_length = len(line)
                         symbols = line.strip()
@@ -80,10 +80,10 @@ class Level:
                             columns.append(tile)
                         self.__tiles.append(columns)
                 else:
-                    print("Le niveau contient des caractères non valides")
+                    print("The level contains invalid characters")
                     return False
         except FileNotFoundError:
-            print("Fichier introuvable : " + filename)
+            print("File not found : " + filename)
             return False
 
         self.__width = len(self.__tiles[0])
@@ -91,9 +91,9 @@ class Level:
         return True
     
     def __validate_level_characters(self, level_file: str) -> bool:
-        allowed = set('\n')
-        for symbol in Tile.TYPES_AND_SYMBOLS:
-            allowed.add(symbol)
+        types_and_symbols = Tile.TYPES_AND_SYMBOLS
+        allowed = set(types_and_symbols.keys())
+        allowed.add('\n')
         return set(level_file) <= allowed
 
     def setup_from_data(self, number, width, height: int, data: str) -> None:

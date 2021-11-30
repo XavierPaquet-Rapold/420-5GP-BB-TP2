@@ -171,7 +171,7 @@ class Samourai(Player):
                     x = self.position[0] + delta[0]
                     y = self.position[1] + delta[1]
 
-                    if (0 <= x <= width - 1) and (0 <= y <= height - 1):
+                    if (0 <= x < width) and (0 <= y < height):
                         correct_path.append((x, y))
                     else:
                         break
