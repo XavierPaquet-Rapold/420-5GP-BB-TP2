@@ -6,6 +6,7 @@ from network import NetMessage
 
 class Player:
     """Représente la base d'un personnage du jeu (ce qui est commun au ninja et aux samouraïs)."""
+    __HP_MAX = 10
 
     def __init__(self, x, y: int) -> None:
         self.position = (x, y)
@@ -16,6 +17,7 @@ class Player:
         self.__is_active = False  # représente la présence d'un joueur
 
         self.__damages = 0
+        self.__hp_current = self.__HP_MAX
 
     def __move(self, level: Level, delta_x, delta_y: int) -> bool:
         tile = level.get_tile(
@@ -99,6 +101,14 @@ class Player:
     def player_active(self, is_active: bool) -> None:
         self.__is_active = is_active
 
+    @property
+    def hp_current(self) -> int:
+        return self.__hp_current
+
+    @property
+    def hp_max(self) -> int:
+        return self.__HP_MAX
+
 
 NINJA_DAMAGES = 2
 
@@ -108,18 +118,8 @@ class Ninja(Player):
     """Représente les spécificités du personnage ninja (éventuellement)."""
 
     def __init__(self, x, y: int) -> None:
-        self.__pv_ninja_max = 10
-        self.__pv_ninja = self.__pv_ninja_max
         super().__init__(x, y)
         self.__damages = NINJA_DAMAGES
-
-    @property
-    def pv_max_ninja(self) -> int:
-        return self.__pv_ninja_max
-
-    @property
-    def pv_ninja(self) -> int:
-        return self.__pv_ninja
 
 
 SAMOURAI_DAMAGES = 1
@@ -171,8 +171,6 @@ class Samourai(Player):
     ]
 
     def __init__(self, x, y: int) -> None:
-        self.__pv_samourai_max = 10
-        self.__pv_samourai = self.__pv_samourai_max
         super().__init__(x, y)
         self.last_drawn_postition = None
         self.tiles = []
@@ -190,7 +188,7 @@ class Samourai(Player):
                     x = self.position[0] + delta[0]
                     y = self.position[1] + delta[1]
 
-                    if (0 <= x <= width - 1) and (0 <= y <= height - 1):
+                    if (0 <= x < width) and (0 <= y < height):
                         correct_path.append((x, y))
                     else:
                         break
@@ -198,11 +196,3 @@ class Samourai(Player):
                 self.tiles.append(correct_path)
 
         return self.tiles
-
-    @property
-    def pv_max_samourai(self) -> int:
-        return self.__pv_samourai_max
-
-    @property
-    def pv_samourai(self) -> int:
-        return self.__pv_samourai

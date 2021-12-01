@@ -206,21 +206,16 @@ class NinjaVSSamourais(arcade.Window):
         return ninja_in_viewing_region
 
     @staticmethod
-    def __health_bar(game: Game, is_samourai: bool) -> None:
-        if is_samourai:
-            player = game.get_current_player()
-            pv_max = player.pv_max_samourai
-            pv = player.pv_samourai
-        else:
-            player = game.get_current_player()
-            pv_max = player.pv_max_ninja
-            pv = player.pv_ninja
+    def __health_bar(game: Game) -> None:
+        player = game.get_current_player()
+        hp_max = player.hp_max
+        hp_current = player.hp_current
         arcade.draw_rectangle_filled(
             0, 0, HUD_WIDTH, HUD_HEIGHT, arcade.color.JAPANESE_VIOLET)
 
-        arcade.draw_rectangle_outline(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, pv_max * HEALTH_BAR_MULTIPLICATOR,
+        arcade.draw_rectangle_outline(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, hp_max * HEALTH_BAR_MULTIPLICATOR,
                                       HEALTH_BAR_HEIGHT, arcade.color.RED)
-        arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, pv * HEALTH_BAR_MULTIPLICATOR,
+        arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, hp_current * HEALTH_BAR_MULTIPLICATOR,
                                      HEALTH_BAR_HEIGHT, arcade.color.RED)
 
     def attack(game: Game, ninja_in_viewing_region: bool) -> None:
@@ -239,11 +234,11 @@ class NinjaVSSamourais(arcade.Window):
 
             if self.__game.i_am_the_ninja():
                 self.__tiles.draw()  # le ninja voit tout le niveau
-                self.__health_bar(self.__game, False)
+                self.__health_bar(self.__game)
             else:
                 self.__ninja_in_viewing_region = self.__draw_viewing_region(
                     self.__game)
-                self.__health_bar(self.__game, True)
+                self.__health_bar(self.__game)
 
             if self.__game.i_am_the_ninja() or self.__ninja_in_viewing_region:
                 self.__draw_ninja(self.__game)

@@ -38,6 +38,7 @@ def main() -> None:
     except KeyboardInterrupt:
         if game_client:
             game_client.stop()
+            arcade.exit()
 
 
 if __name__ == '__main__':
