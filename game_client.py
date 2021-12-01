@@ -66,6 +66,12 @@ class GameClient:
             NetMessage.CMD['position'], self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
         self.__send(net_msg)
 
+    def send_attack(self, damages: int) -> None:
+        """Envoie les degats infliges par un joueur a la cible"""
+        net_msg = NetMessage(
+            NetMessage.CMD['hit'], self.__session_id, NetMessage.DEST_ALL, str(damages))
+        self.__send(net_msg)
+
     @staticmethod
     def __unserialize_level(level_string: str) -> Level or None:
         """Crée un niveau à partir d'une chaîne de caractères représentant un niveau."""

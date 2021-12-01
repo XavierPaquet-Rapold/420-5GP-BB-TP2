@@ -1,4 +1,5 @@
 import arcade
+from pyglet.libs.x11.xlib import Bool
 
 from game import Game
 from game import GameState
@@ -40,6 +41,8 @@ class NinjaVSSamourais(arcade.Window):
 
         self.__time_since_last_move = 0.0
         self.__moving_east = self.__moving_west = self.__moving_north = self.__moving_south = False
+        self.__attacking = False
+        self.__ninja_in_viewing_region = False
 
     def __build_gui_from_game_level(self) -> None:
         """Construit la grille visuelle représentant le niveau courant."""
@@ -220,21 +223,29 @@ class NinjaVSSamourais(arcade.Window):
         arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, pv * HEALTH_BAR_MULTIPLICATOR,
                                      HEALTH_BAR_HEIGHT, arcade.color.RED)
 
+    def attack(game: Game, ninja_in_viewing_region: bool) -> None:
+        player = game.get_current_player()
+        if game.i_am_the_ninja():
+            pass
+        else:
+            if(ninja_in_viewing_region):
+                pass
+
     def on_draw(self) -> None:
         """Dessine l'écran sur une base régulière."""
         arcade.start_render()
         if self.__game.state == GameState.PLAYING_LEVEL:
-            ninja_in_viewing_region = False
+            self.__ninja_in_viewing_region = False
 
             if self.__game.i_am_the_ninja():
                 self.__tiles.draw()  # le ninja voit tout le niveau
                 self.__health_bar(self.__game, False)
             else:
-                ninja_in_viewing_region = self.__draw_viewing_region(
+                self.__ninja_in_viewing_region = self.__draw_viewing_region(
                     self.__game)
                 self.__health_bar(self.__game, True)
 
-            if self.__game.i_am_the_ninja() or ninja_in_viewing_region:
+            if self.__game.i_am_the_ninja() or self.__ninja_in_viewing_region:
                 self.__draw_ninja(self.__game)
 
             self.__draw_samourais(self.__game)
@@ -248,6 +259,8 @@ class NinjaVSSamourais(arcade.Window):
             self.__moving_west = True
         if symbol == arcade.key.RIGHT:
             self.__moving_east = True
+        if symbol == arcade.key.SPACE:
+            self.__attacking = True
 
     def on_key_release(self, symbol: int, modifiers: int):
         if symbol == arcade.key.UP:
@@ -258,6 +271,8 @@ class NinjaVSSamourais(arcade.Window):
             self.__moving_west = False
         if symbol == arcade.key.RIGHT:
             self.__moving_east = False
+        if symbol == arcade.key.SPACE:
+            self.__attacking = False
 
     def on_update(self, delta_time: float):
         self.__game_client.handle_messages(self.__game)
@@ -280,6 +295,8 @@ class NinjaVSSamourais(arcade.Window):
                 dispatch_position = False
                 player_index = self.__game_client.who_am_i()
                 myself = self.__game.get_player(player_index)
+                if self.__attacking:
+                    self.attack(self.__game, )
                 if self.__moving_north:
                     dispatch_position = myself.move_north(self.__game.level)
                 if self.__moving_south:
