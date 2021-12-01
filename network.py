@@ -40,7 +40,7 @@ class NetMessage:
     DATA_OFFSET = HEADER_BYTES
 
     CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL',
-           'active': 'ACT', 'players': 'PLL', 'close': 'CLO'}
+           'active': 'ACT', 'players': 'PLL', 'close': 'CLO', 'queryPosition' : 'APO'}
 
     DATA_POS_BYTES = 3
 
@@ -78,6 +78,9 @@ class NetMessage:
 
     def is_session_close(self) -> bool:
         return self.__command == self.CMD['close']
+
+    def is_query_position(self) -> bool:
+        return self.__command == self.CMD['queryPosition']
 
     @property
     def command(self) -> str:

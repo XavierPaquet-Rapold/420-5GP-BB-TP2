@@ -112,7 +112,8 @@ class NinjaVSSamourais(arcade.Window):
 
         for samourai in list_of_players:
             ninja = list_of_players[0]
-
+            if samourai == list_of_players[4]:
+                print(samourai.player_active)
             if samourai != ninja and samourai.player_active:  # si le joueur n'est pas un ninja et il est actif
                 index = list_of_players.index(samourai)
                 drawing_settings = {
@@ -132,7 +133,6 @@ class NinjaVSSamourais(arcade.Window):
                     "bandanna_color": (0, 0, 0)
                 }
                 index = index + 1
-
                 arcade.draw_rectangle_filled(drawing_settings["offset_x"] + samourai.position[0] * BLOCK_UNIT,
                                              SCREEN_HEIGHT -
                                              (drawing_settings["offset_y"] +
