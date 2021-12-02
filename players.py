@@ -94,19 +94,19 @@ class Player:
     
     @facing_north.setter
     def facing_north(self, facing:bool) ->None:
-        self.__face_north = facing 
+        self.__facing_north = facing 
 
     @facing_south.setter
     def facing_south(self, facing:bool) ->None:
-        self.__face_south = facing 
+        self.__facing_south = facing 
 
     @facing_east.setter
     def facing_east(self, facing:bool) ->None:
-        self.__face_east = facing 
+        self.__facing_east = facing 
 
     @facing_west.setter
     def facing_west(self, facing:bool) ->None:
-        self.__face_west = facing             
+        self.__facing_west = facing             
 
     @property
     def hp_current(self) -> int:

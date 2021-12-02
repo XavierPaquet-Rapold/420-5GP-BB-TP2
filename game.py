@@ -86,30 +86,22 @@ class Game:
 
     def update_player_facing(self, player_id: int, facing: str) -> None:
         player = self.__players[player_id]
-        print("enter upd : " + facing)
         if facing == 'w':
-            print("update north")
             player.facing_north = True 
             player.facing_south = player.facing_east= player.facing_west = False 
-          
-            print("is it up n: " +  str(player.facing_north)) 
-            print("is it up s: " +  str(player.facing_south)) 
-            print("is it up e: " +  str(player.facing_east)) 
-            print("is it up w: " +  str(player.facing_west)) 
+            # player.face_north()
         elif facing == 's':
             player.facing_south = True 
             player.facing_north = player.facing_east = player.facing_west = False 
-    
-            print("is it up n: " +  str(player.facing_north)) 
-            print("is it up s: " +  str(player.facing_south)) 
-            print("is it up e: " +  str(player.facing_east)) 
-            print("is it up w: " +  str(player.facing_west)) 
+            # player.face_south()
         elif facing == 'd':
             player.facing_east = True 
             player.facing_south = player.facing_north = player.facing_west = False 
+            # player.face_east()
         elif facing == 'a':
             player.facing_west = True 
             player.facing_south = player.facing_north = player.facing_east = False             
+            # player.face_west()
 
     @property
     def level(self) -> Level or None:
