@@ -66,10 +66,11 @@ class GameClient:
             NetMessage.CMD['position'], self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
         self.__send(net_msg)
 
-    def send_attack(self, damages: int) -> None:
+    def send_attack(self, damages: int, target: int) -> None:
         """Envoie les degats infliges par un joueur a la cible"""
+        print("JATTAQUE !!!!" + str(damages) + " le " + str(target))
         net_msg = NetMessage(
-            NetMessage.CMD['hit'], self.__session_id, NetMessage.DEST_ALL, str(damages))
+            NetMessage.CMD['hit'], self.__session_id, str(target), str(damages))
         self.__send(net_msg)
 
     @staticmethod

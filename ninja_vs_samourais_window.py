@@ -1,5 +1,4 @@
 import arcade
-from pyglet.libs.x11.xlib import Bool
 
 from game import Game
 from game import GameState
@@ -218,13 +217,21 @@ class NinjaVSSamourais(arcade.Window):
         arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, hp_current * HEALTH_BAR_MULTIPLICATOR,
                                      HEALTH_BAR_HEIGHT, arcade.color.RED)
 
-    def attack(game: Game, ninja_in_viewing_region: bool) -> None:
+    @staticmethod
+    def __attack(game: Game, game_client: GameClient, ninja_in_viewing_region: bool) -> None:
         player = game.get_current_player()
+        ninja = game.get_ninja()
         if game.i_am_the_ninja():
-            pass
-        else:
-            if(ninja_in_viewing_region):
+            if ninja.facing_east:
                 pass
+            elif ninja.facing_north:
+                pass
+            elif ninja.facing_south:
+                pass
+            elif ninja.facing_west:
+                pass
+        elif ninja_in_viewing_region:
+            game_client.send_attack(player.damages, 0)
 
     def on_draw(self) -> None:
         """Dessine l'écran sur une base régulière."""
@@ -291,7 +298,8 @@ class NinjaVSSamourais(arcade.Window):
                 player_index = self.__game_client.who_am_i()
                 myself = self.__game.get_player(player_index)
                 if self.__attacking:
-                    self.attack(self.__game, )
+                    self.__attack(self.__game, self.__game_client,
+                                  self.__ninja_in_viewing_region)
                 if self.__moving_north:
                     dispatch_position = myself.move_north(self.__game.level)
                 if self.__moving_south:
