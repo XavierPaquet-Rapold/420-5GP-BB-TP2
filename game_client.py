@@ -41,6 +41,11 @@ class GameClient:
                 player_id = int(message.source)
                 is_active = bool(int(msg_Active))
                 game.update_is_active(player_id, is_active)
+            elif message.is_facing():
+                msg_facing = message.data
+                player_id = int(message.source)    
+                game.update_player_facing(player_id, msg_facing)
+
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""
@@ -56,6 +61,13 @@ class GameClient:
         """Envoie une demande de la liste des joueurs deja present dans le jeu."""
         net_msg = NetMessage(
             NetMessage.CMD['active'], self.__session_id, NetMessage.DEST_ALL, '')
+        self.__send(net_msg)
+
+    def send_facing(self, facing:str) -> None:
+        """Envoie la direction du joueur au serveur"""
+        print("sended north and: " + facing)
+        net_msg = NetMessage(
+            NetMessage.CMD['facing'], self.__session_id, NetMessage.DEST_ALL, facing)
         self.__send(net_msg)
 
     def send_position(self, position: tuple) -> None:
