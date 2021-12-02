@@ -41,6 +41,10 @@ class GameClient:
                 player_id = int(message.source)
                 is_active = bool(int(msg_Active))
                 game.update_is_active(player_id, is_active)
+            elif message.is_query_position():
+                player = game.get_current_player()
+                self.send_position(player.position)
+
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""
