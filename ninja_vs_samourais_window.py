@@ -4,7 +4,7 @@ from pyglet.libs.x11.xlib import Bool
 from game import Game
 from game import GameState
 from game_client import GameClient
-from players import Samourai
+from players import Ninja, Samourai
 from tile import Tile
 from tile import TileType
 
@@ -112,12 +112,9 @@ class NinjaVSSamourais(arcade.Window):
     def __draw_samourais(game: Game) -> None:
         """Dessine les samouraïs."""
         list_of_players = game.get_all_players()
-
-        for samourai in list_of_players:
-            ninja = list_of_players[0]
-
-            if samourai != ninja and samourai.player_active:  # si le joueur n'est pas un ninja et il est actif
-                index = list_of_players.index(samourai)
+        for player in list_of_players:  
+            if type(player) != Ninja and player.player_active:  # si le joueur n'est pas un ninja et il est actif
+                index = list_of_players.index(player)
                 drawing_settings = {
                     "offset_x": 5,
                     "offset_y": 5,
@@ -134,21 +131,19 @@ class NinjaVSSamourais(arcade.Window):
                     "bandanna_2_height": 2,
                     "bandanna_color": (0, 0, 0)
                 }
-                index = index + 1
-
-                arcade.draw_rectangle_filled(drawing_settings["offset_x"] + samourai.position[0] * BLOCK_UNIT,
+                arcade.draw_rectangle_filled(drawing_settings["offset_x"] + player.position[0] * BLOCK_UNIT,
                                              SCREEN_HEIGHT -
                                              (drawing_settings["offset_y"] +
-                                             samourai.position[1] * BLOCK_UNIT),
+                                             player.position[1] * BLOCK_UNIT),
                                              drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
 
-                if samourai.facing_south:
+                if player.facing_south:
                     drawing_settings.update({
                         "bandanna_1_center_x": 5,
                         "bandanna_1_width": 8,
                         "bandanna_2_center_x": 5
                     })
-                elif samourai.facing_east:
+                elif player.facing_east:
                     drawing_settings.update({
                         "bandanna_1_center_x": 7,
                         "bandanna_1_width": 6,
@@ -161,17 +156,17 @@ class NinjaVSSamourais(arcade.Window):
                         "bandanna_2_center_x": 2
                     })
 
-                if not samourai.facing_north:
-                    arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + samourai.position[0] * BLOCK_UNIT,
+                if not player.facing_north:
+                    arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + player.position[0] * BLOCK_UNIT,
                                                  SCREEN_HEIGHT -
                                                  (drawing_settings["bandanna_1_center_y"] +
-                                                 samourai.position[1] * BLOCK_UNIT),
+                                                 player.position[1] * BLOCK_UNIT),
                                                  drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"], drawing_settings["bandanna_color"])
 
-                    arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + samourai.position[0] * BLOCK_UNIT,
+                    arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + player.position[0] * BLOCK_UNIT,
                                                  SCREEN_HEIGHT -
                                                  (drawing_settings["bandanna_2_center_y"] +
-                                                 samourai.position[1] * BLOCK_UNIT),
+                                                 player.position[1] * BLOCK_UNIT),
                                                  drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"], drawing_settings["bandanna_color"])
 
     @staticmethod
