@@ -40,7 +40,7 @@ class NetMessage:
     DATA_OFFSET = HEADER_BYTES
 
     CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL',
-           'active': 'ACT', 'players': 'PLL', 'close': 'CLO', 'queryPosition' : 'APO'}
+           'active': 'ACT', 'players': 'PLL', 'close': 'CLO', 'queryPosition' : 'QPO'}
 
     DATA_POS_BYTES = 3
 
