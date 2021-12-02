@@ -40,7 +40,7 @@ class NetMessage:
     DATA_OFFSET = HEADER_BYTES
 
     CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL',
-           'active': 'ACT', 'players': 'PLL', 'close': 'CLO'}
+           'active': 'ACT', 'players': 'PLL', 'close': 'CLO', 'queryPosition' : 'QPO'}
 
     DATA_POS_BYTES = 3
 
@@ -78,6 +78,9 @@ class NetMessage:
 
     def is_session_close(self) -> bool:
         return self.__command == self.CMD['close']
+
+    def is_query_position(self) -> bool:
+        return self.__command == self.CMD['queryPosition']
 
     @property
     def command(self) -> str:
@@ -325,8 +328,12 @@ class NetServer:
 
     def send(self, message: NetMessage) -> None:
         """Envoie un message à tous les clients connectés."""
-        for ctrl in self.listener.session_controllers:
-            ctrl.write(message.copy())
+        if message.destination != NetMessage.DEST_ALL:
+                ctrl_to_send = self.listener.ctrl(int(message.destination))
+                ctrl_to_send.write(message.copy())
+        else:
+            for ctrl in self.listener.session_controllers:
+                ctrl.write(message.copy())
 
     def send_to_all_but_one(self, message: NetMessage, session_id: str) -> None:
         """Envoie un message à tous les clients connectés sauf un (session_id)."""
