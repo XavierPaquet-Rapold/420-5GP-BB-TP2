@@ -68,11 +68,11 @@ class GameServer:
     def send_new_player_active(self, source) -> None:
         net_msg = NetMessage(
             NetMessage.CMD['active'], source, NetMessage.DEST_ALL, '1')
-        self.__send_to_all_but_source(net_msg)
+        self.__send(net_msg)
     
     def send_query_position(self, source):
         net_msg = NetMessage(NetMessage.CMD['queryPosition'], source, NetMessage.DEST_ALL, '')
-        self.__send_to_all_but_source(net_msg)
+        self.__send(net_msg)
 
     def start(self) -> None:
         self.__network_server.start()
