@@ -34,6 +34,7 @@ class GameServer:
                 self.send_players_list_to(
                     message.source, ",".join(self.__players))
                 self.send_new_player_active(message.source)
+                self.send_query_position(message.source)
             elif message.is_session_close():
                 net_msg = NetMessage(
                     message.command, message.source, NetMessage.DEST_ALL, message.data)
@@ -67,7 +68,11 @@ class GameServer:
     def send_new_player_active(self, source) -> None:
         net_msg = NetMessage(
             NetMessage.CMD['active'], source, NetMessage.DEST_ALL, '1')
-        self.__send_to_all_but_source(net_msg)
+        self.__send(net_msg)
+    
+    def send_query_position(self, source):
+        net_msg = NetMessage(NetMessage.CMD['queryPosition'], source, NetMessage.DEST_ALL, '')
+        self.__send(net_msg)
 
     def start(self) -> None:
         self.__network_server.start()

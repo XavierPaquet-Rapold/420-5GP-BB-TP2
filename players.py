@@ -1,9 +1,13 @@
+from abc import abstractmethod
+from game_client import GameClient
 from level import Level
+from network import NetMessage
 
 
 class Player:
     """Représente la base d'un personnage du jeu (ce qui est commun au ninja et aux samouraïs)."""
     __HP_MAX = 10
+
     def __init__(self, x, y: int) -> None:
         self.position = (x, y)
 
@@ -12,6 +16,7 @@ class Player:
 
         self.__is_active = False  # représente la présence d'un joueur
 
+        self.__damages = 0
         self.__hp_current = self.__HP_MAX
 
     def __move(self, level: Level, delta_x, delta_y: int) -> bool:
@@ -59,6 +64,10 @@ class Player:
         self.__face_west()
         return self.__move(level, -1, 0)
 
+    def attack(self, game_client: GameClient) -> None:
+        """Attacker un autre joueur"""
+        game_client.send_attack(self.__damages)
+
     @property
     def facing_east(self) -> bool:
         return self.__facing_east
@@ -101,12 +110,19 @@ class Player:
         return self.__HP_MAX
 
 
+NINJA_DAMAGES = 2
+
+
 class Ninja(Player):
 
     """Représente les spécificités du personnage ninja (éventuellement)."""
 
     def __init__(self, x, y: int) -> None:
         super().__init__(x, y)
+        self.__damages = NINJA_DAMAGES
+
+
+SAMOURAI_DAMAGES = 1
 
 
 class Samourai(Player):
@@ -158,6 +174,7 @@ class Samourai(Player):
         super().__init__(x, y)
         self.last_drawn_postition = None
         self.tiles = []
+        self.__damages = SAMOURAI_DAMAGES
 
     def get_viewing_region(self, width: int, height: int) -> list:
         """Retourne le champ de vision du samouraï."""
