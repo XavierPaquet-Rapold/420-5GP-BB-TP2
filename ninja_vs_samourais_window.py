@@ -276,16 +276,16 @@ class NinjaVSSamourais(arcade.Window):
                 player_index = self.__game_client.who_am_i()
                 myself = self.__game.get_player(player_index)
                 if self.__moving_north:
-                    self.__game_client.send_facing('w')
+                    self.__game_client.send_facing('n')
                     dispatch_position = myself.move_north(self.__game.level)
                 if self.__moving_south:
                     self.__game_client.send_facing('s')
                     dispatch_position = myself.move_south(self.__game.level)
                 if self.__moving_west:
-                    self.__game_client.send_facing('a')
+                    self.__game_client.send_facing('w')
                     dispatch_position = myself.move_west(self.__game.level)
                 if self.__moving_east:
-                    self.__game_client.send_facing('d')
+                    self.__game_client.send_facing('e')
                     dispatch_position = myself.move_east(self.__game.level)
                 if dispatch_position:
                     self.__game_client.send_position(myself.position)

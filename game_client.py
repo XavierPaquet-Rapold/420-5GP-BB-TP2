@@ -65,7 +65,6 @@ class GameClient:
 
     def send_facing(self, facing:str) -> None:
         """Envoie la direction du joueur au serveur"""
-        print("sended north and: " + facing)
         net_msg = NetMessage(
             NetMessage.CMD['facing'], self.__session_id, NetMessage.DEST_ALL, facing)
         self.__send(net_msg)
