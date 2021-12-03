@@ -12,6 +12,7 @@ class Player:
 
         self.__facing_south = True
         self.__facing_north = self.__facing_east = self.__facing_west = False
+        # self.__is_hit = False
 
         self.__is_active = False  # représente la présence d'un joueur
 
@@ -26,6 +27,8 @@ class Player:
                              delta_x, self.position[1] + delta_y)
             return True
         return False
+
+
 
     def __face_east(self) -> None:
         self.__facing_east = True
@@ -63,6 +66,12 @@ class Player:
         self.__face_west()
         return self.__move(level, -1, 0)
 
+    def hit(self, damage: int) -> int:
+        self.__hp_current -= damage
+        return self.__hp_current
+
+
+
     @property
     def facing_east(self) -> bool:
         return self.__facing_east
@@ -99,6 +108,10 @@ class Player:
     def damages(self) -> int:
         return self.__damages
 
+    # @property
+    # def is_hit(self) -> bool:
+    #     return self.__is_hit
+
     @position.setter
     def position(self, position: tuple) -> None:
         self.__position = position
@@ -110,6 +123,10 @@ class Player:
     @damages.setter
     def damages(self, damages: int) -> None:
         self.__damages = damages
+
+    # @is_hit.setter
+    # def is_hit(self, is_hit: bool) -> None:
+    #     self.__is_hit = is_hit
 
 
 class Ninja(Player):
@@ -124,12 +141,12 @@ class Ninja(Player):
 class Samourai(Player):
     """Représente les spécificités des personnages samouraïs."""
 
-    COLORS = [(91, 155, 213),   # samourai 1
-              (112, 173, 71),   # samourai 2
-              (255, 192, 0),    # samourai 3
-              (255, 153, 51),   # samourai 4
+    COLORS = [(91, 155, 213),  # samourai 1
+              (112, 173, 71),  # samourai 2
+              (255, 192, 0),  # samourai 3
+              (255, 153, 51),  # samourai 4
               (255, 102, 153),  # samourai 5
-              (153, 0, 255)]    # samourai 6
+              (153, 0, 255)]  # samourai 6
 
     __SAMOURAI_DAMAGES = 1
 
