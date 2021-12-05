@@ -4,7 +4,7 @@ from enum import auto
 from level import Level
 from players import Ninja, Player
 from players import Samourai
-
+from tile import Tile, TileType
 
 class GameState(Enum):
     STARTING = auto(),
@@ -85,17 +85,18 @@ class Game:
         player = self.__players[player_id]
         player.player_active = is_active
 
-    def verification_trajectoire(self, x_ninja: int, y_ninja: int) -> bool:
+    def check_for_ennemy(self, x_ninja: int, y_ninja: int) -> int:
         id_samourai = -1
+        
         for samourai in self.__players:
             id_samourai += 1
             if x_ninja == samourai.position[0] and y_ninja == samourai.position[1] and samourai.player_active:
                 print("toucher samourai")
                 return id_samourai
 
-
-
-
+    def check_for_wall(self, x_ninja: int, y_ninja: int) -> bool:
+        tile = self.level.get_tile(x_ninja, y_ninja)
+        return tile.tile_type == Tile.TYPES_AND_SYMBOLS.get('W').get('tileType')
 
     @property
     def victim(self) -> Player:
