@@ -7,6 +7,7 @@ from players import Ninja, Player
 from players import Samourai
 from tile import Tile, TileType
 
+
 class GameState(Enum):
     STARTING = auto(),
     STARTED = auto(),
@@ -27,7 +28,6 @@ class Game:
         self.player_id = -1
         self.__player_is_ninja = False
         self.__players = []
-        self.__player_victim = 0
 
         self.state = GameState.STARTING
 
@@ -98,10 +98,6 @@ class Game:
         tile = self.level.get_tile(position[0], position[1])
         return tile.tile_type == Tile.TYPES_AND_SYMBOLS.get('W').get('tileType')
 
-    @property
-    def victim(self) -> Player:
-        return self.__player_victim
-    
     def update_player_facing(self, player_id: int, facing: str) -> None:
         player = self.__players[player_id]
         if facing == 'n':
@@ -132,7 +128,3 @@ class Game:
     @state.setter
     def state(self, state) -> None:
         self.__state = state
-        
-    @victim.setter
-    def victim(self, player: Player) -> None:
-        self.__player_victim = player

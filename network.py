@@ -57,6 +57,8 @@ class NetMessage:
     SRC_SERVER = '99'
     DEST_ALL = '99'
 
+    VICTORY_TYPE = ('ninja', 'samourais')
+
     def __init__(self, command, source, destination, data: str) -> None:
         self.__command = command
         self.__source = source
@@ -242,7 +244,8 @@ class NetListener(threading.Thread):
         self.port = port
 
         # Dictionnaire sous le format {session_id: isUsed}
-        self.sessions_ids = {0: False, 1: False, 2: False, 3: False, 4: False, 5: False, 6: False}
+        self.sessions_ids = {0: False, 1: False, 2: False,
+                             3: False, 4: False, 5: False, 6: False}
 
         self.session_controllers = []
 
