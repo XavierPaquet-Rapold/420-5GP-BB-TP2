@@ -46,7 +46,11 @@ class GameClient:
             elif message.is_query_position():
                 player = game.get_current_player()
                 self.send_position(player.position)
-
+            elif message.is_hit():
+                damage = int(message.data)
+                player = game.get_current_player()
+                player.hit(damage)
+                game.victime = player
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""
@@ -72,10 +76,18 @@ class GameClient:
             NetMessage.CMD['position'], self.__session_id, NetMessage.DEST_ALL, x_str + y_str + facing)
         self.__send(net_msg)
 
-    def send_attack(self, damages: int) -> None:
+    def send_attack(self, damages: int, target: int) -> None:
         """Envoie les degats infliges par un joueur a la cible"""
+        print("JATTAQUE !!!! " + str(damages) + " le " + str(target))
+        damages_str = str(damages).zfill(NetMessage.DATA_ATK_BYTES)
+        target_str = str(target).zfill(NetMessage.DATA_TARGET_BYTES)
         net_msg = NetMessage(
-            NetMessage.CMD['hit'], self.__session_id, NetMessage.DEST_ALL, str(damages))
+            NetMessage.CMD['hit'], self.__session_id, target_str, damages_str)
+        self.__send(net_msg)
+
+    def send_dead(self):
+        """Envoie que le joueur n'a plus de points de vie"""
+        net_msg = NetMessage(NetMessage.CMD['playerDead', self.__session_id, NetMessage.DEST_ALL, ''])
         self.__send(net_msg)
 
     @staticmethod

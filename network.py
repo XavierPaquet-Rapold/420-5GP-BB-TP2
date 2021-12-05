@@ -41,9 +41,12 @@ class NetMessage:
     DATA_OFFSET = HEADER_BYTES
 
     CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL',
-           'active': 'ACT', 'players': 'PLL', 'close': 'CLO'}
+           'active': 'ACT', 'players': 'PLL', 'close': 'CLO', 'hit': 'HIT', 'queryPosition': 'QPO',
+           'endGame': 'END', 'playerDead': 'DED'}
 
     DATA_POS_BYTES = 3
+    DATA_ATK_BYTES = 2
+    DATA_TARGET_BYTES = 2
 
     DATA_LVL_NUMBER_BYTES = 2
     DATA_LVL_WIDTH_BYTES = 3
@@ -79,6 +82,18 @@ class NetMessage:
 
     def is_session_close(self) -> bool:
         return self.__command == self.CMD['close']
+
+    def is_hit(self) -> bool:
+        return self.__command == self.CMD['hit']
+
+    def is_query_position(self) -> bool:
+        return self.__command == self.CMD['queryPosition']
+
+    def is_end_game(self) -> bool:
+        return self.__command == self.CMD['endGame']
+
+    def is_player_dead(self) -> bool:
+        return self.__command == self.CMD['playerDead']
 
     @property
     def command(self) -> str:

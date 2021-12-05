@@ -1,5 +1,4 @@
 import arcade
-from pyglet.libs.x11.xlib import Bool
 
 from game import Game
 from game import GameState
@@ -7,6 +6,8 @@ from game_client import GameClient
 from players import Ninja, Samourai
 from tile import Tile
 from tile import TileType
+
+import threading as th
 
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 520
@@ -43,6 +44,8 @@ class NinjaVSSamourais(arcade.Window):
         self.__moving_east = self.__moving_west = self.__moving_north = self.__moving_south = False
         self.__attacking = False
         self.__ninja_in_viewing_region = False
+        self.__cooldown = 0
+        self.__possible_attack = True
 
     def __build_gui_from_game_level(self) -> None:
         """Construit la grille visuelle représentant le niveau courant."""
@@ -112,7 +115,7 @@ class NinjaVSSamourais(arcade.Window):
     def __draw_samourais(game: Game) -> None:
         """Dessine les samouraïs."""
         list_of_players = game.get_all_players()
-        for player in list_of_players:  
+        for player in list_of_players:
             if type(player) != Ninja and player.player_active:  # si le joueur n'est pas un ninja et il est actif
                 index = list_of_players.index(player)
                 drawing_settings = {
@@ -134,8 +137,9 @@ class NinjaVSSamourais(arcade.Window):
                 arcade.draw_rectangle_filled(drawing_settings["offset_x"] + player.position[0] * BLOCK_UNIT,
                                              SCREEN_HEIGHT -
                                              (drawing_settings["offset_y"] +
-                                             player.position[1] * BLOCK_UNIT),
-                                             drawing_settings["body_width"], drawing_settings["body_height"], drawing_settings["body_color"])
+                                              player.position[1] * BLOCK_UNIT),
+                                             drawing_settings["body_width"], drawing_settings["body_height"],
+                                             drawing_settings["body_color"])
 
                 if player.facing_south:
                     drawing_settings.update({
@@ -157,17 +161,21 @@ class NinjaVSSamourais(arcade.Window):
                     })
 
                 if not player.facing_north:
-                    arcade.draw_rectangle_filled(drawing_settings["bandanna_1_center_x"] + player.position[0] * BLOCK_UNIT,
-                                                 SCREEN_HEIGHT -
-                                                 (drawing_settings["bandanna_1_center_y"] +
-                                                 player.position[1] * BLOCK_UNIT),
-                                                 drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"], drawing_settings["bandanna_color"])
+                    arcade.draw_rectangle_filled(
+                        drawing_settings["bandanna_1_center_x"] + player.position[0] * BLOCK_UNIT,
+                        SCREEN_HEIGHT -
+                        (drawing_settings["bandanna_1_center_y"] +
+                         player.position[1] * BLOCK_UNIT),
+                        drawing_settings["bandanna_1_width"], drawing_settings["bandanna_1_height"],
+                        drawing_settings["bandanna_color"])
 
-                    arcade.draw_rectangle_filled(drawing_settings["bandanna_2_center_x"] + player.position[0] * BLOCK_UNIT,
-                                                 SCREEN_HEIGHT -
-                                                 (drawing_settings["bandanna_2_center_y"] +
-                                                 player.position[1] * BLOCK_UNIT),
-                                                 drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"], drawing_settings["bandanna_color"])
+                    arcade.draw_rectangle_filled(
+                        drawing_settings["bandanna_2_center_x"] + player.position[0] * BLOCK_UNIT,
+                        SCREEN_HEIGHT -
+                        (drawing_settings["bandanna_2_center_y"] +
+                         player.position[1] * BLOCK_UNIT),
+                        drawing_settings["bandanna_2_width"], drawing_settings["bandanna_2_height"],
+                        drawing_settings["bandanna_color"])
 
     @staticmethod
     def __draw_viewing_region(game: Game) -> bool:
@@ -210,16 +218,86 @@ class NinjaVSSamourais(arcade.Window):
 
         arcade.draw_rectangle_outline(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, hp_max * HEALTH_BAR_MULTIPLICATOR,
                                       HEALTH_BAR_HEIGHT, arcade.color.RED)
-        arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, hp_current * HEALTH_BAR_MULTIPLICATOR,
+        arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y,
+                                     hp_current * HEALTH_BAR_MULTIPLICATOR,
                                      HEALTH_BAR_HEIGHT, arcade.color.RED)
 
-    def attack(game: Game, ninja_in_viewing_region: bool) -> None:
+    @staticmethod
+    def update_health_bar(game: Game) -> None:
+
+        player = game.victime
+
+        arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y,
+                                     player.hp_current * HEALTH_BAR_MULTIPLICATOR,
+                                     HEALTH_BAR_HEIGHT, arcade.color.RED)
+
+    @staticmethod
+    def __attack(game: Game, game_client: GameClient, ninja_in_viewing_region: bool) -> None:
         player = game.get_current_player()
+        ninja = game.get_ninja()
         if game.i_am_the_ninja():
-            pass
-        else:
-            if(ninja_in_viewing_region):
-                pass
+            if ninja.facing_east:
+                x_ninja_iterative = ninja.position[0]
+                y_ninja_iterative = ninja.position[1]
+
+                while x_ninja_iterative <= 50:
+                    x_ninja_iterative += 1
+
+                    if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
+                        break
+
+                    target = game.check_for_ennemy(x_ninja_iterative, y_ninja_iterative, 0, 1)
+                    if target != None:
+                        game_client.send_attack(player.damages, target)
+                        break
+                    
+            elif ninja.facing_north:
+                x_ninja_iterative = ninja.position[0]
+                y_ninja_iterative = ninja.position[1]
+
+                while y_ninja_iterative >= 0:
+                    y_ninja_iterative -= 1
+
+                    if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
+                        break
+
+                    target = game.check_for_ennemy(y_ninja_iterative, x_ninja_iterative, 1, 0)
+                    if target != None:
+                        game_client.send_attack(player.damages, target)
+                        break
+
+            elif ninja.facing_south:
+                x_ninja_iterative = ninja.position[0]
+                y_ninja_iterative = ninja.position[1]
+
+                while y_ninja_iterative <= 50:
+                    y_ninja_iterative += 1
+
+                    if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
+                        break
+
+                    target = game.check_for_ennemy(y_ninja_iterative, x_ninja_iterative, 1, 0)
+                    if target != None:
+                        game_client.send_attack(player.damages, target)
+                        break
+
+            elif ninja.facing_west:
+                x_ninja_iterative = ninja.position[0]
+                y_ninja_iterative = ninja.position[1]
+
+                while x_ninja_iterative >= 0:
+                    x_ninja_iterative -= 1
+
+                    if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
+                        break
+
+                    target = game.check_for_ennemy(x_ninja_iterative, y_ninja_iterative, 0, 1)
+                    if target != None:
+                        game_client.send_attack(player.damages, target)
+                        break
+
+        elif ninja_in_viewing_region:
+            game_client.send_attack(player.damages, 0)
 
     def on_draw(self) -> None:
         """Dessine l'écran sur une base régulière."""
@@ -286,8 +364,11 @@ class NinjaVSSamourais(arcade.Window):
                 dispatch_position = False
                 player_index = self.__game_client.who_am_i()
                 myself = self.__game.get_player(player_index)
-                if self.__attacking:
-                    self.attack(self.__game, )
+                if self.__attacking and self.__possible_attack:
+                    self.__attack(self.__game, self.__game_client, self.__ninja_in_viewing_region)
+                    self.__possible_attack = False
+                    self.__cooldown = th.Timer(2.0, self.__change_possible_attack, [True])
+                    self.__cooldown.start()
                 if self.__moving_north:
                     facing = 'n'
                     dispatch_position = myself.move_north(self.__game.level)
@@ -301,4 +382,8 @@ class NinjaVSSamourais(arcade.Window):
                     facing = 'e'
                     dispatch_position = myself.move_east(self.__game.level)
                 if dispatch_position:
-                    self.__game_client.send_position(myself.position, facing)
+                    self.__game_client.send_position(myself.position)
+
+    def __change_possible_attack(self, possible: bool):
+        self.__possible_attack = possible
+        self.__game_client.send_position(myself.position, facing)

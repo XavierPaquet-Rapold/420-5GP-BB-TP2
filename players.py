@@ -1,5 +1,4 @@
 from abc import abstractmethod
-from game_client import GameClient
 from level import Level
 from network import NetMessage
 
@@ -8,7 +7,7 @@ class Player:
     """Représente la base d'un personnage du jeu (ce qui est commun au ninja et aux samouraïs)."""
     __HP_MAX = 10
 
-    def __init__(self, x, y: int) -> None:
+    def __init__(self, x: int, y: int, damages=0) -> None:
         self.position = (x, y)
 
         self.__facing_south = True
@@ -16,7 +15,7 @@ class Player:
 
         self.__is_active = False  # représente la présence d'un joueur
 
-        self.__damages = 0
+        self.__damages = damages
         self.__hp_current = self.__HP_MAX
 
     def __move(self, level: Level, delta_x, delta_y: int) -> bool:
@@ -64,9 +63,13 @@ class Player:
         self.face_west()
         return self.__move(level, -1, 0)
 
-    def attack(self, game_client: GameClient) -> None:
-        """Attacker un autre joueur"""
-        game_client.send_attack(self.__damages)
+    def hit(self, damage: int) -> int:
+        """Fais subir les dégats au personnage"""
+        if self.__hp_current > 0:
+            self.__hp_current -= damage
+            return self.__hp_current
+        else:
+            return 0
 
     @property
     def facing_east(self) -> bool:
@@ -92,14 +95,6 @@ class Player:
     def player_active(self) -> bool:
         return self.__is_active
 
-    @position.setter
-    def position(self, position: tuple) -> None:
-        self.__position = position
-
-    @player_active.setter
-    def player_active(self, is_active: bool) -> None:
-        self.__is_active = is_active
-
     @property
     def hp_current(self) -> int:
         return self.__hp_current
@@ -108,29 +103,48 @@ class Player:
     def hp_max(self) -> int:
         return self.__HP_MAX
 
+    @property
+    def damages(self) -> int:
+        return self.__damages
 
-NINJA_DAMAGES = 2
+    @position.setter
+    def position(self, position: tuple) -> None:
+        self.__position = position
+
+    @player_active.setter
+    def player_active(self, is_active: bool) -> None:
+        self.__is_active = is_active
 
 class Ninja(Player):
 
+    @damages.setter
+    def damages(self, damages: int) -> None:
+        self.__damages = damages
+
+    # @is_hit.setter
+    # def is_hit(self, is_hit: bool) -> None:
+    #     self.__is_hit = is_hit
+
+
+class Ninja(Player):
     """Représente les spécificités du personnage ninja (éventuellement)."""
 
+    __NINJA_DAMAGES = 2
+
     def __init__(self, x, y: int) -> None:
-        super().__init__(x, y)
-        self.__damages = NINJA_DAMAGES
-
-
-SAMOURAI_DAMAGES = 1
+        super().__init__(x, y, self.__NINJA_DAMAGES)
 
 class Samourai(Player):
-
     """Représente les spécificités des personnages samouraïs."""
-    COLORS = [(91, 155, 213),   # samourai 1
-              (112, 173, 71),   # samourai 2
-              (255, 192, 0),    # samourai 3
-              (255, 153, 51),   # samourai 4
+
+    COLORS = [(91, 155, 213),  # samourai 1
+              (112, 173, 71),  # samourai 2
+              (255, 192, 0),  # samourai 3
+              (255, 153, 51),  # samourai 4
               (255, 102, 153),  # samourai 5
-              (153, 0, 255)]    # samourai 6
+              (153, 0, 255)]  # samourai 6
+
+    __SAMOURAI_DAMAGES = 1
 
     __VIEWING_REGION_DELTAS = [
         [(0, -1), (0, -2), (-1, -3), (-1, -4)],
@@ -168,10 +182,9 @@ class Samourai(Player):
     ]
 
     def __init__(self, x, y: int) -> None:
-        super().__init__(x, y)
+        super().__init__(x, y, self.__SAMOURAI_DAMAGES)
         self.last_drawn_postition = None
         self.tiles = []
-        self.__damages = SAMOURAI_DAMAGES
 
     def get_viewing_region(self, width: int, height: int) -> list:
         """Retourne le champ de vision du samouraï."""
