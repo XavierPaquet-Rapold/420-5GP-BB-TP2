@@ -1,8 +1,10 @@
+from select import select
 import arcade
 
 from game import Game
 from game import GameState
 from game_client import GameClient
+from level import Level
 from players import Ninja, Samourai
 from tile import Tile
 from tile import TileType
@@ -236,66 +238,32 @@ class NinjaVSSamourais(arcade.Window):
         player = game.get_current_player()
         ninja = game.get_ninja()
         if game.i_am_the_ninja():
+            axis_position = list(ninja.position)
             if ninja.facing_east:
-                x_ninja_iterative = ninja.position[0]
-                y_ninja_iterative = ninja.position[1]
-
-                while x_ninja_iterative <= 50:
-                    x_ninja_iterative += 1
-
-                    if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
-                        break
-
-                    target = game.check_for_ennemy(x_ninja_iterative, y_ninja_iterative, 0, 1)
-                    if target != None:
-                        game_client.send_attack(player.damages, target)
-                        break
-                    
+                iteration = 1
+                position_to_iterate = 0
+   
             elif ninja.facing_north:
-                x_ninja_iterative = ninja.position[0]
-                y_ninja_iterative = ninja.position[1]
-
-                while y_ninja_iterative >= 0:
-                    y_ninja_iterative -= 1
-
-                    if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
-                        break
-
-                    target = game.check_for_ennemy(y_ninja_iterative, x_ninja_iterative, 1, 0)
-                    if target != None:
-                        game_client.send_attack(player.damages, target)
-                        break
+                iteration = -1
+                position_to_iterate = 1
 
             elif ninja.facing_south:
-                x_ninja_iterative = ninja.position[0]
-                y_ninja_iterative = ninja.position[1]
-
-                while y_ninja_iterative <= 50:
-                    y_ninja_iterative += 1
-
-                    if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
-                        break
-
-                    target = game.check_for_ennemy(y_ninja_iterative, x_ninja_iterative, 1, 0)
-                    if target != None:
-                        game_client.send_attack(player.damages, target)
-                        break
+                iteration = 1
+                position_to_iterate = 1
 
             elif ninja.facing_west:
-                x_ninja_iterative = ninja.position[0]
-                y_ninja_iterative = ninja.position[1]
+                iteration = -1
+                position_to_iterate = 0
 
-                while x_ninja_iterative >= 0:
-                    x_ninja_iterative -= 1
+            while axis_position[position_to_iterate] >= 0 and axis_position[position_to_iterate] < game.level.height - 1:
+                axis_position[position_to_iterate] += iteration
+                if game.check_for_wall(axis_position):
+                    break
 
-                    if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
-                        break
-
-                    target = game.check_for_ennemy(x_ninja_iterative, y_ninja_iterative, 0, 1)
-                    if target != None:
-                        game_client.send_attack(player.damages, target)
-                        break
-
+                target = game.check_for_ennemy(axis_position)
+                if target != None:
+                    game_client.send_attack(player.damages, target)
+                    break
         elif ninja_in_viewing_region:
             game_client.send_attack(player.damages, 0)
 
