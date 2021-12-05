@@ -103,6 +103,17 @@ class Game:
     @property
     def victim(self) -> Player:
         return self.__player_victim
+    
+    def update_player_facing(self, player_id: int, facing: str) -> None:
+        player = self.__players[player_id]
+        if facing == 'n':
+            player.face_north()
+        elif facing == 's':
+            player.face_south()
+        elif facing == 'e':
+            player.face_east()
+        elif facing == 'w':
+            player.face_west()
 
     @property
     def level(self) -> Level or None:
