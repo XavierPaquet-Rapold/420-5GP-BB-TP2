@@ -49,8 +49,14 @@ class GameClient:
             elif message.is_hit():
                 damage = int(message.data)
                 player = game.get_current_player()
-                player.hit(damage)
+                if player.hit(damage) == 0:
+                    print("You are dead")
+                    self.stop()
+                
                 game.victime = player
+            elif message.is_end_game():
+                print(message.data)
+                self.stop()
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""

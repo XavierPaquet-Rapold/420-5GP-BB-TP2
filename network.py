@@ -42,7 +42,7 @@ class NetMessage:
 
     CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL',
            'active': 'ACT', 'players': 'PLL', 'close': 'CLO', 'hit': 'HIT', 'queryPosition': 'QPO',
-           'endGame': 'END', 'playerDead': 'DED'}
+           'endGame': 'END'}
 
     DATA_POS_BYTES = 3
     DATA_ATK_BYTES = 2
@@ -240,7 +240,7 @@ class NetListener(threading.Thread):
         self.port = port
 
         # Dictionnaire sous le format {session_id: isUsed}
-        self.sessions_ids = {0: False, 1:False, 2:False, 3:False, 4:False, 5:False, 6:False}
+        self.sessions_ids = {0: False, 1: False, 2: False, 3: False, 4: False, 5: False, 6: False}
 
         self.session_controllers = []
 
@@ -277,9 +277,7 @@ class NetListener(threading.Thread):
                     session_controller = NetSessionController(
                         client_socket)
                     session_controller.start()
-
                     self.session_controllers.append(session_controller)
-
                     # On cherche le premier session_id qui dont l'usage est False 
                     session_id = self.__get_key(False)
                     if session_id != -1:
