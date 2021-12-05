@@ -45,7 +45,7 @@ class GameClient:
                 game.update_is_active(player_id, is_active)
             elif message.is_query_position():
                 player = game.get_current_player()
-                self.send_position(player.position)
+                self.send_position(player.position, player.get_facing())
             elif message.is_hit():
                 damage = int(message.data)
                 player = game.get_current_player()

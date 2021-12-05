@@ -357,8 +357,12 @@ class NetServer:
 
     def send(self, message: NetMessage) -> None:
         """Envoie un message à tous les clients connectés."""
-        for ctrl in self.listener.session_controllers:
-            ctrl.write(message.copy())
+        if message.destination != NetMessage.DEST_ALL:
+            ctrl_to_send = self.listener.ctrl(int(message.destination))
+            ctrl_to_send.write(message.copy())
+        else:
+            for ctrl in self.listener.session_controllers:
+                ctrl.write(message.copy())
 
     def send_to_all_but_one(self, message: NetMessage, session_id: str) -> None:
         """Envoie un message à tous les clients connectés sauf un (session_id)."""

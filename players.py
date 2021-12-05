@@ -70,6 +70,16 @@ class Player:
             return self.__hp_current
         else:
             return 0
+    
+    def get_facing(self) -> str:
+        if self.__facing_east:
+            return 'e'
+        if self.__facing_north:
+            return 'n'
+        if self.__facing_south:
+            return 's'
+        if self.__facing_west:
+            return 'w'
 
     @property
     def facing_east(self) -> bool:
@@ -114,17 +124,10 @@ class Player:
     @player_active.setter
     def player_active(self, is_active: bool) -> None:
         self.__is_active = is_active
-
-class Ninja(Player):
-
+    
     @damages.setter
     def damages(self, damages: int) -> None:
         self.__damages = damages
-
-    # @is_hit.setter
-    # def is_hit(self, is_hit: bool) -> None:
-    #     self.__is_hit = is_hit
-
 
 class Ninja(Player):
     """Représente les spécificités du personnage ninja (éventuellement)."""
