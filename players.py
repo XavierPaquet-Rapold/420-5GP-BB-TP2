@@ -28,40 +28,40 @@ class Player:
             return True
         return False
 
-    def __face_east(self) -> None:
+    def face_east(self) -> None:
         self.__facing_east = True
         self.__facing_west = self.__facing_north = self.__facing_south = False
 
-    def __face_north(self) -> None:
+    def face_north(self) -> None:
         self.__facing_north = True
         self.__facing_south = self.__facing_east = self.__facing_west = False
 
-    def __face_south(self) -> None:
+    def face_south(self) -> None:
         self.__facing_south = True
         self.__facing_north = self.__facing_east = self.__facing_west = False
 
-    def __face_west(self) -> None:
+    def face_west(self) -> None:
         self.__facing_west = True
         self.__facing_east = self.__facing_north = self.__facing_south = False
 
     def move_east(self, level: Level) -> bool:
         """Déplace le personnage vers l'Est."""
-        self.__face_east()
+        self.face_east()
         return self.__move(level, 1, 0)
 
     def move_north(self, level: Level) -> bool:
         """Déplace le personnage vers le Nord."""
-        self.__face_north()
+        self.face_north()
         return self.__move(level, 0, -1)
 
     def move_south(self, level: Level) -> bool:
         """Déplace le personnage vers le Sud."""
-        self.__face_south()
+        self.face_south()
         return self.__move(level, 0, 1)
 
     def move_west(self, level: Level) -> bool:
         """Déplace le personnage vers l'Ouest'."""
-        self.__face_west()
+        self.face_west()
         return self.__move(level, -1, 0)
 
     def attack(self, game_client: GameClient) -> None:
@@ -88,7 +88,6 @@ class Player:
     def position(self) -> tuple:
         return self.__position
 
-    # ajout du return is_active
     @property
     def player_active(self) -> bool:
         return self.__is_active
@@ -112,7 +111,6 @@ class Player:
 
 NINJA_DAMAGES = 2
 
-
 class Ninja(Player):
 
     """Représente les spécificités du personnage ninja (éventuellement)."""
@@ -123,7 +121,6 @@ class Ninja(Player):
 
 
 SAMOURAI_DAMAGES = 1
-
 
 class Samourai(Player):
 

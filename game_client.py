@@ -19,9 +19,11 @@ class GameClient:
         for message in messages:
             if message.is_position():
                 x = message.data[0:NetMessage.DATA_POS_BYTES]
-                y = message.data[NetMessage.DATA_POS_BYTES:]
+                y = message.data[3:NetMessage.DATA_POS_BYTES + 3]
+                facing = message.data[-1]
                 player_id = int(message.source)
                 game.update_player_position(player_id, (int(x), int(y)))
+                game.update_player_facing(player_id, facing)
             elif message.is_session_id():
                 if message.data.isdigit():
                     self.__session_id = message.data.zfill(
@@ -62,12 +64,12 @@ class GameClient:
             NetMessage.CMD['active'], self.__session_id, NetMessage.DEST_ALL, '')
         self.__send(net_msg)
 
-    def send_position(self, position: tuple) -> None:
+    def send_position(self, position: tuple, facing:str) -> None:
         """Envoie la position du joueur au serveur."""
         x_str = str(position[0]).zfill(NetMessage.DATA_POS_BYTES)
         y_str = str(position[1]).zfill(NetMessage.DATA_POS_BYTES)
         net_msg = NetMessage(
-            NetMessage.CMD['position'], self.__session_id, NetMessage.DEST_ALL, x_str + y_str)
+            NetMessage.CMD['position'], self.__session_id, NetMessage.DEST_ALL, x_str + y_str + facing)
         self.__send(net_msg)
 
     def send_attack(self, damages: int) -> None:
