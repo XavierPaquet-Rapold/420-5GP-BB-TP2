@@ -79,7 +79,6 @@ class Player:
     def position(self) -> tuple:
         return self.__position
 
-    # ajout du return is_active
     @property
     def player_active(self) -> bool:
         return self.__is_active
@@ -91,22 +90,6 @@ class Player:
     @player_active.setter
     def player_active(self, is_active: bool) -> None:
         self.__is_active = is_active
-    
-    @facing_north.setter
-    def facing_north(self, facing:bool) ->None:
-        self.__facing_north = facing 
-
-    @facing_south.setter
-    def facing_south(self, facing:bool) ->None:
-        self.__facing_south = facing 
-
-    @facing_east.setter
-    def facing_east(self, facing:bool) ->None:
-        self.__facing_east = facing 
-
-    @facing_west.setter
-    def facing_west(self, facing:bool) ->None:
-        self.__facing_west = facing             
 
     @property
     def hp_current(self) -> int:
@@ -116,14 +99,12 @@ class Player:
     def hp_max(self) -> int:
         return self.__HP_MAX
 
-
 class Ninja(Player):
 
     """Représente les spécificités du personnage ninja (éventuellement)."""
 
     def __init__(self, x, y: int) -> None:
         super().__init__(x, y)
-
 
 class Samourai(Player):
 

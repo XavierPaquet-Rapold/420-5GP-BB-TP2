@@ -20,10 +20,10 @@ class GameClient:
             if message.is_position():
                 x = message.data[0:NetMessage.DATA_POS_BYTES]
                 y = message.data[3:NetMessage.DATA_POS_BYTES + 3]
-                facing = message.data[6]
+                facing = message.data[-1]
                 player_id = int(message.source)
                 game.update_player_position(player_id, (int(x), int(y)))
-                game.update_player_facing(player_id,facing)
+                game.update_player_facing(player_id, facing)
             elif message.is_session_id():
                 if message.data.isdigit():
                     self.__session_id = message.data.zfill(
@@ -43,11 +43,6 @@ class GameClient:
                 player_id = int(message.source)
                 is_active = bool(int(msg_Active))
                 game.update_is_active(player_id, is_active)
-            elif message.is_facing():
-                msg_facing = message.data
-                player_id = int(message.source)    
-                game.update_player_facing(player_id, msg_facing)
-
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""
