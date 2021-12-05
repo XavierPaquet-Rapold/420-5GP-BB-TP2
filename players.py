@@ -12,7 +12,6 @@ class Player:
 
         self.__facing_south = True
         self.__facing_north = self.__facing_east = self.__facing_west = False
-        # self.__is_hit = False
 
         self.__is_active = False  # représente la présence d'un joueur
 
@@ -67,10 +66,12 @@ class Player:
         return self.__move(level, -1, 0)
 
     def hit(self, damage: int) -> int:
-        self.__hp_current -= damage
-        return self.__hp_current
-
-
+        """Fais subir les dégats au personnage"""
+        if self.__hp_current > 0:
+            self.__hp_current -= damage
+            return self.__hp_current
+        else:
+            return 0
 
     @property
     def facing_east(self) -> bool:
@@ -108,9 +109,6 @@ class Player:
     def damages(self) -> int:
         return self.__damages
 
-    # @property
-    # def is_hit(self) -> bool:
-    #     return self.__is_hit
 
     @position.setter
     def position(self, position: tuple) -> None:

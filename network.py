@@ -43,6 +43,8 @@ class NetMessage:
            'active': 'ACT', 'players': 'PLL', 'close': 'CLO', 'hit': 'HIT', 'queryPosition': 'QPO'}
 
     DATA_POS_BYTES = 3
+    DATA_ATK_BYTES = 2
+    DATA_TARGET_BYTES = 2
 
     DATA_LVL_NUMBER_BYTES = 2
     DATA_LVL_WIDTH_BYTES = 3

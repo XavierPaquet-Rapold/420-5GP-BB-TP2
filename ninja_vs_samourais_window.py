@@ -7,6 +7,8 @@ from players import Ninja, Samourai
 from tile import Tile
 from tile import TileType
 
+import threading as th
+
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 520
 HEALTH_BAR_POSITION_X = 70
@@ -42,6 +44,7 @@ class NinjaVSSamourais(arcade.Window):
         self.__moving_east = self.__moving_west = self.__moving_north = self.__moving_south = False
         self.__attacking = False
         self.__ninja_in_viewing_region = False
+        self.__cooldown = 0
 
     def __build_gui_from_game_level(self) -> None:
         """Construit la grille visuelle représentant le niveau courant."""
@@ -218,7 +221,14 @@ class NinjaVSSamourais(arcade.Window):
                                      hp_current * HEALTH_BAR_MULTIPLICATOR,
                                      HEALTH_BAR_HEIGHT, arcade.color.RED)
 
+    @staticmethod
+    def update_health_bar(game: Game) -> None:
 
+        player = game.victime
+
+        arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y,
+                                     player.hp_current * HEALTH_BAR_MULTIPLICATOR,
+                                     HEALTH_BAR_HEIGHT, arcade.color.RED)
 
     @staticmethod
     def __attack(game: Game, game_client: GameClient, ninja_in_viewing_region: bool) -> None:
@@ -235,10 +245,6 @@ class NinjaVSSamourais(arcade.Window):
                 pass
         elif ninja_in_viewing_region:
             game_client.send_attack(player.damages, 0)
-
-            arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y,
-                                         ninja.hit(player.damages) * HEALTH_BAR_MULTIPLICATOR,
-                                         HEALTH_BAR_HEIGHT, arcade.color.RED)
 
     def on_draw(self) -> None:
         """Dessine l'écran sur une base régulière."""
@@ -305,8 +311,9 @@ class NinjaVSSamourais(arcade.Window):
                 player_index = self.__game_client.who_am_i()
                 myself = self.__game.get_player(player_index)
                 if self.__attacking:
-                    self.__attack(self.__game, self.__game_client,
-                                  self.__ninja_in_viewing_region)
+                    self.__cooldown = th.Timer(2.0, self.__attack, [self.__game, self.__game_client,
+                                               self.__ninja_in_viewing_region])
+                    self.__cooldown.start()
                 if self.__moving_north:
                     dispatch_position = myself.move_north(self.__game.level)
                 if self.__moving_south:

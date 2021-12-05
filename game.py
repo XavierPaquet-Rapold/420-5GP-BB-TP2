@@ -26,6 +26,7 @@ class Game:
         self.player_id = -1
         self.__player_is_ninja = False
         self.__players = []
+        self.__player_victim = 0
 
         self.state = GameState.STARTING
 
@@ -36,7 +37,7 @@ class Game:
             Ninja(player_positions[0]['x'], player_positions[0]['y']))
         for i in range(6):
             self.__players.append(
-                Samourai(player_positions[i+1]['x'], player_positions[i+1]['y']))
+                Samourai(player_positions[i + 1]['x'], player_positions[i + 1]['y']))
 
     def i_am_the_ninja(self) -> bool:
         return self.__player_is_ninja
@@ -85,6 +86,10 @@ class Game:
         player.player_active = is_active
 
     @property
+    def victim(self) -> Player:
+        return self.__player_victim
+
+    @property
     def level(self) -> Level or None:
         return self.__level
 
@@ -103,3 +108,7 @@ class Game:
     @state.setter
     def state(self, state) -> None:
         self.__state = state
+        
+    @victim.setter
+    def victim(self, player: Player) -> None:
+        self.__player_victim = player
