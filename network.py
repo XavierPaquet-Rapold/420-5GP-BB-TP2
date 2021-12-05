@@ -4,6 +4,7 @@ import sys
 import threading
 
 from queue import Empty, Queue
+from typing import Dict
 
 
 MAX_RX_QSIZE = 10
@@ -40,7 +41,7 @@ class NetMessage:
     DATA_OFFSET = HEADER_BYTES
 
     CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL',
-           'active': 'ACT', 'players': 'PLL', 'close': 'CLO', 'hit': 'HIT', 'queryPosition': 'QPO'}
+           'active': 'ACT', 'players': 'PLL', 'close': 'CLO'}
 
     DATA_POS_BYTES = 3
 
@@ -78,12 +79,6 @@ class NetMessage:
 
     def is_session_close(self) -> bool:
         return self.__command == self.CMD['close']
-
-    def is_hit(self) -> bool:
-        return self.__command == self.CMD['hit']
-
-    def is_query_position(self) -> bool:
-        return self.__command == self.CMD['queryPosition']
 
     @property
     def command(self) -> str:
@@ -229,6 +224,9 @@ class NetListener(threading.Thread):
         self.host = host
         self.port = port
 
+        # Dictionnaire sous le format {session_id: isUsed}
+        self.sessions_ids = {0: False, 1:False, 2:False, 3:False, 4:False, 5:False, 6:False}
+
         self.session_controllers = []
 
         self.running = False
@@ -240,14 +238,17 @@ class NetListener(threading.Thread):
                               str(session_id).zfill(NetMessage.SRC_BYTES),
                               str(session_id)))
 
+    def __get_key(self, val):
+        for key, value in self.sessions_ids.items():
+            if val == value:
+                return key
+        return -1
+
     def ctrl(self, session_id: int) -> NetSessionController:
         return self.session_controllers[session_id]
 
     def run(self) -> None:
         self.server_socket.listen(LISTEN_QUEUE)
-
-        session_id = 0
-
         self.running = True
 
         while self.running:
@@ -263,10 +264,16 @@ class NetListener(threading.Thread):
                     session_controller.start()
 
                     self.session_controllers.append(session_controller)
-                    self.__send_session_id(session_controller, session_id)
-                    print(
-                        f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
-                    session_id += 1
+
+                    # On cherche le premier session_id qui dont l'usage est False 
+                    session_id = self.__get_key(False)
+                    if session_id != -1:
+                        self.__send_session_id(session_controller, session_id)
+                        self.sessions_ids[session_id] = True
+                        print(f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
+                    else: 
+                        print("No spot is left for another player")
+
             except OSError:
                 break
 
@@ -275,6 +282,10 @@ class NetListener(threading.Thread):
             ctrl.stop()
         self.running = False
         print("Server closed")
+
+    def notify_session_stoped(self, session_id : int) -> None:
+        self.sessions_ids[session_id] = False
+        print(self.sessions_ids)
 
 
 class NetServer:
@@ -331,12 +342,8 @@ class NetServer:
 
     def send(self, message: NetMessage) -> None:
         """Envoie un message à tous les clients connectés."""
-        if message.destination != NetMessage.DEST_ALL:
-            ctrl_to_send = self.listener.ctrl(int(message.destination))
-            ctrl_to_send.write(message.copy())
-        else:
-            for ctrl in self.listener.session_controllers:
-                ctrl.write(message.copy())
+        for ctrl in self.listener.session_controllers:
+            ctrl.write(message.copy())
 
     def send_to_all_but_one(self, message: NetMessage, session_id: str) -> None:
         """Envoie un message à tous les clients connectés sauf un (session_id)."""
@@ -351,7 +358,8 @@ class NetServer:
     def close_session_controller(self, session_id: str) -> None:
         ctrl = self.listener.session_controllers[int(session_id)]
         ctrl.stop()
-        print(f"Client {int(session_id)} disconnected from server")
+        self.listener.notify_session_stoped(int(session_id))
+
 
     def start(self) -> None:
         self.listener.start()
