@@ -76,7 +76,7 @@ class GameClient:
 
     def send_attack(self, damages: int, target: int) -> None:
         """Envoie les degats infliges par un joueur a la cible"""
-        print("JATTAQUE !!!!" + str(damages) + " le " + str(target))
+        print("JATTAQUE !!!! " + str(damages) + " le " + str(target))
         damages_str = str(damages).zfill(NetMessage.DATA_ATK_BYTES)
         target_str = str(target).zfill(NetMessage.DATA_TARGET_BYTES)
         net_msg = NetMessage(

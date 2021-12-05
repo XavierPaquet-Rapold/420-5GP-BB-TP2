@@ -85,6 +85,18 @@ class Game:
         player = self.__players[player_id]
         player.player_active = is_active
 
+    def verification_trajectoire(self, x_ninja: int, y_ninja: int) -> bool:
+        id_samourai = -1
+        for samourai in self.__players:
+            id_samourai += 1
+            if x_ninja == samourai.position[0] and y_ninja == samourai.position[1] and samourai.player_active:
+                print("toucher samourai")
+                return id_samourai
+
+
+
+
+
     @property
     def victim(self) -> Player:
         return self.__player_victim

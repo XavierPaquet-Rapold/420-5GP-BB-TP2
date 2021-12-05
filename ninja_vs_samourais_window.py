@@ -236,7 +236,15 @@ class NinjaVSSamourais(arcade.Window):
         ninja = game.get_ninja()
         if game.i_am_the_ninja():
             if ninja.facing_east:
-                pass
+                x_ninja_iterative = ninja.position[0]
+                y_ninja_iterative = ninja.position[1]
+                while True:
+                    x_ninja_iterative += 1
+                    target = game.verification_trajectoire(x_ninja_iterative, y_ninja_iterative)
+                    if target != None:
+                        game_client.send_attack(player.damages, target)
+                        break
+                    
             elif ninja.facing_north:
                 pass
             elif ninja.facing_south:
@@ -311,7 +319,7 @@ class NinjaVSSamourais(arcade.Window):
                 player_index = self.__game_client.who_am_i()
                 myself = self.__game.get_player(player_index)
                 if self.__attacking:
-                    self.__cooldown = th.Timer(2.0, self.__attack, [self.__game, self.__game_client,
+                    self.__cooldown = th.Timer(0.1, self.__attack, [self.__game, self.__game_client,
                                                self.__ninja_in_viewing_region])
                     self.__cooldown.start()
                 if self.__moving_north:
