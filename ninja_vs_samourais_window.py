@@ -45,6 +45,7 @@ class NinjaVSSamourais(arcade.Window):
         self.__attacking = False
         self.__ninja_in_viewing_region = False
         self.__cooldown = 0
+        self.__possible_attack = True
 
     def __build_gui_from_game_level(self) -> None:
         """Construit la grille visuelle représentant le niveau courant."""
@@ -310,9 +311,10 @@ class NinjaVSSamourais(arcade.Window):
                 dispatch_position = False
                 player_index = self.__game_client.who_am_i()
                 myself = self.__game.get_player(player_index)
-                if self.__attacking:
-                    self.__cooldown = th.Timer(2.0, self.__attack, [self.__game, self.__game_client,
-                                               self.__ninja_in_viewing_region])
+                if self.__attacking and self.__possible_attack:
+                    self.__attack(self.__game, self.__game_client, self.__ninja_in_viewing_region)
+                    self.__possible_attack = False
+                    self.__cooldown = th.Timer(2.0, self.__change_possible_attack, [True])
                     self.__cooldown.start()
                 if self.__moving_north:
                     dispatch_position = myself.move_north(self.__game.level)
@@ -324,3 +326,6 @@ class NinjaVSSamourais(arcade.Window):
                     dispatch_position = myself.move_east(self.__game.level)
                 if dispatch_position:
                     self.__game_client.send_position(myself.position)
+
+    def __change_possible_attack(self, possible: bool):
+        self.__possible_attack = possible
