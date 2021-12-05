@@ -2,7 +2,7 @@ from enum import Enum
 from enum import auto
 
 from level import Level
-from players import Ninja
+from players import Ninja, Player
 from players import Samourai
 
 
@@ -44,7 +44,7 @@ class Game:
     def declare_ninja(self) -> None:
         self.__player_is_ninja = True
 
-    def get_current_player(self) -> int:
+    def get_current_player(self) -> Player:
         return self.__players[self.player_id]
 
     def get_ninja(self) -> Ninja:

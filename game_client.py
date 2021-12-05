@@ -43,6 +43,10 @@ class GameClient:
                 player_id = int(message.source)
                 is_active = bool(int(msg_Active))
                 game.update_is_active(player_id, is_active)
+            elif message.is_query_position():
+                player = game.get_current_player()
+                self.send_position(player.position)
+
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""
@@ -66,6 +70,12 @@ class GameClient:
         y_str = str(position[1]).zfill(NetMessage.DATA_POS_BYTES)
         net_msg = NetMessage(
             NetMessage.CMD['position'], self.__session_id, NetMessage.DEST_ALL, x_str + y_str + facing)
+        self.__send(net_msg)
+
+    def send_attack(self, damages: int) -> None:
+        """Envoie les degats infliges par un joueur a la cible"""
+        net_msg = NetMessage(
+            NetMessage.CMD['hit'], self.__session_id, NetMessage.DEST_ALL, str(damages))
         self.__send(net_msg)
 
     @staticmethod
