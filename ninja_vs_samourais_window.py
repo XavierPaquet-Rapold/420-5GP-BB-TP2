@@ -116,7 +116,8 @@ class NinjaVSSamourais(arcade.Window):
         """Dessine les samouraïs."""
         list_of_players = game.get_all_players()
         for player in list_of_players:
-            if type(player) != Ninja and player.player_active:  # si le joueur n'est pas un ninja et il est actif
+            # si le joueur n'est pas un ninja et il est actif
+            if type(player) != Ninja and player.player_active:
                 index = list_of_players.index(player)
                 drawing_settings = {
                     "offset_x": 5,
@@ -162,7 +163,8 @@ class NinjaVSSamourais(arcade.Window):
 
                 if not player.facing_north:
                     arcade.draw_rectangle_filled(
-                        drawing_settings["bandanna_1_center_x"] + player.position[0] * BLOCK_UNIT,
+                        drawing_settings["bandanna_1_center_x"] +
+                        player.position[0] * BLOCK_UNIT,
                         SCREEN_HEIGHT -
                         (drawing_settings["bandanna_1_center_y"] +
                          player.position[1] * BLOCK_UNIT),
@@ -170,7 +172,8 @@ class NinjaVSSamourais(arcade.Window):
                         drawing_settings["bandanna_color"])
 
                     arcade.draw_rectangle_filled(
-                        drawing_settings["bandanna_2_center_x"] + player.position[0] * BLOCK_UNIT,
+                        drawing_settings["bandanna_2_center_x"] +
+                        player.position[0] * BLOCK_UNIT,
                         SCREEN_HEIGHT -
                         (drawing_settings["bandanna_2_center_y"] +
                          player.position[1] * BLOCK_UNIT),
@@ -225,7 +228,7 @@ class NinjaVSSamourais(arcade.Window):
     @staticmethod
     def update_health_bar(game: Game) -> None:
 
-        player = game.victime
+        player = game.get_current_player()
 
         arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y,
                                      player.hp_current * HEALTH_BAR_MULTIPLICATOR,
@@ -246,11 +249,12 @@ class NinjaVSSamourais(arcade.Window):
                     if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
                         break
 
-                    target = game.check_for_ennemy(x_ninja_iterative, y_ninja_iterative, 0, 1)
+                    target = game.check_for_ennemy(
+                        x_ninja_iterative, y_ninja_iterative, 0, 1)
                     if target != None:
                         game_client.send_attack(player.damages, target)
                         break
-                    
+
             elif ninja.facing_north:
                 x_ninja_iterative = ninja.position[0]
                 y_ninja_iterative = ninja.position[1]
@@ -261,7 +265,8 @@ class NinjaVSSamourais(arcade.Window):
                     if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
                         break
 
-                    target = game.check_for_ennemy(y_ninja_iterative, x_ninja_iterative, 1, 0)
+                    target = game.check_for_ennemy(
+                        y_ninja_iterative, x_ninja_iterative, 1, 0)
                     if target != None:
                         game_client.send_attack(player.damages, target)
                         break
@@ -276,7 +281,8 @@ class NinjaVSSamourais(arcade.Window):
                     if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
                         break
 
-                    target = game.check_for_ennemy(y_ninja_iterative, x_ninja_iterative, 1, 0)
+                    target = game.check_for_ennemy(
+                        y_ninja_iterative, x_ninja_iterative, 1, 0)
                     if target != None:
                         game_client.send_attack(player.damages, target)
                         break
@@ -291,7 +297,8 @@ class NinjaVSSamourais(arcade.Window):
                     if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
                         break
 
-                    target = game.check_for_ennemy(x_ninja_iterative, y_ninja_iterative, 0, 1)
+                    target = game.check_for_ennemy(
+                        x_ninja_iterative, y_ninja_iterative, 0, 1)
                     if target != None:
                         game_client.send_attack(player.damages, target)
                         break
@@ -363,9 +370,11 @@ class NinjaVSSamourais(arcade.Window):
                 dispatch_position = False
                 player = self.__game.get_current_player()
                 if self.__attacking and self.__possible_attack:
-                    self.__attack(self.__game, self.__game_client, self.__ninja_in_viewing_region)
+                    self.__attack(self.__game, self.__game_client,
+                                  self.__ninja_in_viewing_region)
                     self.__possible_attack = False
-                    self.__cooldown = th.Timer(2.0, self.__change_possible_attack, [True])
+                    self.__cooldown = th.Timer(
+                        2.0, self.__change_possible_attack, [True])
                     self.__cooldown.start()
                 if self.__moving_north:
                     dispatch_position = player.move_north(self.__game.level)
@@ -376,7 +385,8 @@ class NinjaVSSamourais(arcade.Window):
                 if self.__moving_east:
                     dispatch_position = player.move_east(self.__game.level)
                 if dispatch_position:
-                    self.__game_client.send_position(player.position, player.get_facing())
+                    self.__game_client.send_position(
+                        player.position, player.get_facing())
 
     def __change_possible_attack(self, possible: bool):
         self.__possible_attack = possible

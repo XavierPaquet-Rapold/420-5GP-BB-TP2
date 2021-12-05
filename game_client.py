@@ -50,10 +50,13 @@ class GameClient:
                 damage = int(message.data)
                 player = game.get_current_player()
                 if player.hit(damage) == 0:
-                    print("You are dead")
+                    print('You are dead')
                     self.stop()
-                
-                game.victime = player
+            elif message.is_end_game():
+                if message.data == NetMessage.VICTORY_TYPE[0]:
+                    print('Le ninja a gagne !')
+                elif message.data == NetMessage.VICTORY_TYPE[1]:
+                    print('Les samourais ont gagne')
             elif message.is_end_game():
                 print(message.data)
                 self.stop()
@@ -74,7 +77,7 @@ class GameClient:
             NetMessage.CMD['active'], self.__session_id, NetMessage.DEST_ALL, '')
         self.__send(net_msg)
 
-    def send_position(self, position: tuple, facing:str) -> None:
+    def send_position(self, position: tuple, facing: str) -> None:
         """Envoie la position du joueur au serveur."""
         x_str = str(position[0]).zfill(NetMessage.DATA_POS_BYTES)
         y_str = str(position[1]).zfill(NetMessage.DATA_POS_BYTES)
@@ -93,7 +96,8 @@ class GameClient:
 
     def send_dead(self):
         """Envoie que le joueur n'a plus de points de vie"""
-        net_msg = NetMessage(NetMessage.CMD['playerDead', self.__session_id, NetMessage.DEST_ALL, ''])
+        net_msg = NetMessage(
+            NetMessage.CMD['playerDead', self.__session_id, NetMessage.DEST_ALL, ''])
         self.__send(net_msg)
 
     @staticmethod

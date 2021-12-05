@@ -6,6 +6,7 @@ from players import Ninja, Player
 from players import Samourai
 from tile import Tile, TileType
 
+
 class GameState(Enum):
     STARTING = auto(),
     STARTED = auto(),
@@ -26,7 +27,6 @@ class Game:
         self.player_id = -1
         self.__player_is_ninja = False
         self.__players = []
-        self.__player_victim = 0
 
         self.state = GameState.STARTING
 
@@ -85,10 +85,10 @@ class Game:
         player = self.__players[player_id]
         player.player_active = is_active
 
-    def check_for_ennemy(self, axe_verif: int, axe_compare: int, compare_id : int, compare_id_bis: int) -> int:
+    def check_for_ennemy(self, axe_verif: int, axe_compare: int, compare_id: int, compare_id_bis: int) -> int:
         """verifier si un samourai se trouve sur une case en avant du ninja, sinon, verifie la prochaine case"""
         id_samourai = -1
-        
+
         for samourai in self.__players:
             id_samourai += 1
             if axe_verif == samourai.position[compare_id] and axe_compare == samourai.position[compare_id_bis] and samourai.player_active:
@@ -100,10 +100,6 @@ class Game:
         tile = self.level.get_tile(x_ninja, y_ninja)
         return tile.tile_type == Tile.TYPES_AND_SYMBOLS.get('W').get('tileType')
 
-    @property
-    def victim(self) -> Player:
-        return self.__player_victim
-    
     def update_player_facing(self, player_id: int, facing: str) -> None:
         player = self.__players[player_id]
         if facing == 'n':
@@ -134,7 +130,3 @@ class Game:
     @state.setter
     def state(self, state) -> None:
         self.__state = state
-        
-    @victim.setter
-    def victim(self, player: Player) -> None:
-        self.__player_victim = player
