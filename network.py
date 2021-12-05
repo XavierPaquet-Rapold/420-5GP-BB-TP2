@@ -220,13 +220,11 @@ class NetListener(threading.Thread):
                  host: str = NetSettings.SERVER_HOST, port: int = NetSettings.SERVER_PORT) -> None:
         super().__init__()
 
-        
-
-        
         self.server_socket = server_socket
         self.host = host
         self.port = port
 
+        # Dictionnaire sous le format {session_id: isUsed}
         self.sessions_ids = {0: False, 1:False, 2:False, 3:False, 4:False, 5:False, 6:False}
 
         self.session_controllers = []
@@ -266,7 +264,8 @@ class NetListener(threading.Thread):
                     session_controller.start()
 
                     self.session_controllers.append(session_controller)
- 
+
+                    # On cherche le premier session_id qui don't l'usage est False 
                     session_id = self.__get_key(False)
                     if session_id != -1:
                         self.__send_session_id(session_controller, session_id)
