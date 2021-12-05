@@ -265,7 +265,7 @@ class NetListener(threading.Thread):
 
                     self.session_controllers.append(session_controller)
 
-                    # On cherche le premier session_id qui don't l'usage est False 
+                    # On cherche le premier session_id qui dont l'usage est False 
                     session_id = self.__get_key(False)
                     if session_id != -1:
                         self.__send_session_id(session_controller, session_id)
