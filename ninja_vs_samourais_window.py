@@ -237,7 +237,22 @@ class NinjaVSSamourais(arcade.Window):
         ninja = game.get_ninja()
         if game.i_am_the_ninja():
             if ninja.facing_east:
-                pass
+                x_ninja_iterative = ninja.position[0]
+                y_ninja_iterative = ninja.position[1]
+                # pour facing south : while y_ninja_iterative <= 50, y ++
+                # pour facing west : while x_ninja_iterative >= 0, x --
+                # pour facing noth : while y_ninja_iterative >= 0, y--
+                while x_ninja_iterative <= 50:
+                    x_ninja_iterative += 1
+                    
+                    if game.check_for_wall(x_ninja_iterative, y_ninja_iterative):
+                        break
+
+                    target = game.check_for_ennemy(x_ninja_iterative, y_ninja_iterative)
+                    if target != None:
+                        game_client.send_attack(player.damages, target)
+                        break
+                    
             elif ninja.facing_north:
                 pass
             elif ninja.facing_south:
