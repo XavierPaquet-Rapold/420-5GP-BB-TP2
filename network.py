@@ -6,6 +6,8 @@ import threading
 from queue import Empty, Queue
 from typing import Dict
 
+from arcade.color import NEON_GREEN
+
 
 MAX_RX_QSIZE = 10
 MAX_TX_QSIZE = 10
@@ -272,19 +274,26 @@ class NetListener(threading.Thread):
                     [self.server_socket], [], [], 0.1)
                 for _ in readable:
                     client_socket, ip_address = self.server_socket.accept()
+                    session_id = self.__get_key(False)
 
                     # On crée un contrôleur pour servir cette session client...
                     session_controller = NetSessionController(
                         client_socket)
+
+                    if len(self.session_controllers) >= session_id + 1:
+                        self.session_controllers[session_id] = session_controller
+                    else:
+                        self.session_controllers.append(session_controller)
+
                     session_controller.start()
-                    self.session_controllers.append(session_controller)
-                    # On cherche le premier session_id qui dont l'usage est False 
-                    session_id = self.__get_key(False)
+
+                    # On cherche le premier session_id qui dont l'usage est False
                     if session_id != -1:
                         self.__send_session_id(session_controller, session_id)
                         self.sessions_ids[session_id] = True
-                        print(f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
-                    else: 
+                        print(
+                            f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
+                    else:
                         print("No spot is left for another player")
 
             except OSError:
@@ -296,7 +305,7 @@ class NetListener(threading.Thread):
         self.running = False
         print("Server closed")
 
-    def notify_session_stoped(self, session_id : int) -> None:
+    def notify_session_stoped(self, session_id: int) -> None:
         self.sessions_ids[session_id] = False
         print(self.sessions_ids)
 
@@ -344,12 +353,13 @@ class NetServer:
     def receive_from_ctrl(ctrl: NetSessionController) -> list:
         messages = []
 
-        while True:
-            message = ctrl.read()
-            if message:
-                messages.append(message)
-            else:
-                break
+        if ctrl:
+            while True:
+                message = ctrl.read()
+                if message:
+                    messages.append(message)
+                else:
+                    break
 
         return messages
 
@@ -376,7 +386,6 @@ class NetServer:
         ctrl = self.listener.session_controllers[int(session_id)]
         ctrl.stop()
         self.listener.notify_session_stoped(int(session_id))
-
 
     def start(self) -> None:
         self.listener.start()
