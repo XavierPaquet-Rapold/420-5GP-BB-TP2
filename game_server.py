@@ -44,7 +44,8 @@ class GameServer:
                 net_msg = NetMessage(
                     message.command, message.source, message.destination, message.data)
                 self.__send(net_msg)
-
+            elif message.is_player_dead():
+                pass
 
     def get_ip(self) -> str:
         return self.__network_server.get_ip()
@@ -77,6 +78,10 @@ class GameServer:
     
     def send_query_position(self, source):
         net_msg = NetMessage(NetMessage.CMD['queryPosition'], source, NetMessage.DEST_ALL, '')
+        self.__send(net_msg)
+    
+    def send_end_game(self, data: str):
+        net_msg = NetMessage(NetMessage.CMD['endGame'], NetMessage.SRC_SERVER, NetMessage.DEST_ALL, data)
         self.__send(net_msg)
 
     def start(self) -> None:

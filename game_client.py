@@ -83,6 +83,11 @@ class GameClient:
             NetMessage.CMD['hit'], self.__session_id, target_str, damages_str)
         self.__send(net_msg)
 
+    def send_dead(self):
+        """Envoie que le joueur n'a plus de points de vie"""
+        net_msg = NetMessage(NetMessage.CMD['playerDead', self.__session_id, NetMessage.DEST_ALL, ''])
+        self.__send(net_msg)
+
     @staticmethod
     def __unserialize_level(level_string: str) -> Level or None:
         """Crée un niveau à partir d'une chaîne de caractères représentant un niveau."""
