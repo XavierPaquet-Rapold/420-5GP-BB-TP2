@@ -85,16 +85,18 @@ class Game:
         player = self.__players[player_id]
         player.player_active = is_active
 
-    def check_for_ennemy(self, x_ninja: int, y_ninja: int) -> int:
+    def check_for_ennemy(self, axe_verif: int, axe_compare: int, compare_id : int, compare_id_bis: int) -> int:
+        """verifier si un samourai se trouve sur une case en avant du ninja, sinon, verifie la prochaine case"""
         id_samourai = -1
         
         for samourai in self.__players:
             id_samourai += 1
-            if x_ninja == samourai.position[0] and y_ninja == samourai.position[1] and samourai.player_active:
+            if axe_verif == samourai.position[compare_id] and axe_compare == samourai.position[compare_id_bis] and samourai.player_active:
                 print("toucher samourai")
                 return id_samourai
 
     def check_for_wall(self, x_ninja: int, y_ninja: int) -> bool:
+        """verifier si un mur se trouve sur une case en avant du ninja, sinon, verifie la prochaine case"""
         tile = self.level.get_tile(x_ninja, y_ninja)
         return tile.tile_type == Tile.TYPES_AND_SYMBOLS.get('W').get('tileType')
 
