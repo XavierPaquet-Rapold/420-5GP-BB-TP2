@@ -105,7 +105,8 @@ class GameClient:
 
     def send_dead(self):
         """Envoie que le joueur n'a plus de points de vie"""
-        net_msg = NetMessage(NetMessage.CMD['playerDead', self.__session_id, NetMessage.DEST_ALL, ''])
+        net_msg = NetMessage(
+            NetMessage.CMD['playerDead', self.__session_id, NetMessage.DEST_ALL, ''])
         self.__send(net_msg)
 
     @staticmethod

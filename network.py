@@ -4,7 +4,6 @@ import sys
 import threading
 
 from queue import Empty, Queue
-from typing import Dict
 
 
 MAX_RX_QSIZE = 10
