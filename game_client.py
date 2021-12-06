@@ -63,13 +63,11 @@ class GameClient:
                     self.__close_window()
             elif message.is_end_game():
                 if message.data == NetMessage.VICTORY_TYPE[0]:                    
-                    print('The ninja won!')  
-                    self.stop()
-                    self.__close_window()
-                elif message.data == NetMessage.VICTORY_TYPE[1]:
+                    print('The ninja won!') 
+                else:
                     print('The samourais won')
-                    self.stop()
-                    self.__close_window()
+                self.stop()
+                self.__close_window()
 
     def __close_window(self):
         from ninja_vs_samourais_client import close_window
