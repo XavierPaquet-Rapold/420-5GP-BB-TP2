@@ -54,7 +54,6 @@ class GameClient:
                     from ninja_vs_samourais_client import close_window
                     close_window()
             elif message.is_end_game():
-<<<<<<< HEAD
                 if message.data == NetMessage.VICTORY_TYPE[0]:                    
                     print('The ninja won!')  
                     self.stop()
@@ -66,12 +65,6 @@ class GameClient:
                     from ninja_vs_samourais_client import close_window
                     close_window()
                     
-=======
-                if message.data == NetMessage.VICTORY_TYPE[0]:
-                    print('The ninja won!')
-                elif message.data == NetMessage.VICTORY_TYPE[1]:
-                    print('The samourais won!')
->>>>>>> f7f923615d9a567b39aea2aa547b8af7cf00eb06
             elif message.is_end_game():
                 print(message.data)
                 self.stop()
