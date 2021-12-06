@@ -34,11 +34,9 @@ class Game:
     def __create_ninja_and_samourais(self):
         """Instancie le ninja et les samouraïs."""
         player_positions = self.level.get_starting_positions()
-        self.__players.append(
-            Ninja(player_positions[0]['x'], player_positions[0]['y']))
+        self.__players.append(Ninja(player_positions[0]['x'], player_positions[0]['y']))
         for i in range(self.__number_of_samourais):
-            self.__players.append(
-                Samourai(player_positions[i + 1]['x'], player_positions[i + 1]['y']))
+            self.__players.append(Samourai(player_positions[i + 1]['x'], player_positions[i + 1]['y']))
 
     def i_am_the_ninja(self) -> bool:
         return self.__player_is_ninja
@@ -87,14 +85,14 @@ class Game:
         player = self.__players[player_id]
         player.player_active = is_active
 
-    def check_for_ennemy(self, position: tuple) -> int:
+    def check_for_ennemy(self, position: list) -> int:
         """verifier si un samourai se trouve sur une case en avant du ninja, sinon, verifie la prochaine case"""
         for samourai in self.__players:
             if tuple(position) == samourai.position and samourai.player_active:
                 id_samourai = self.get_all_players().index(samourai)
                 return id_samourai
 
-    def check_for_wall(self, position: tuple) -> bool:
+    def check_for_wall(self, position: list) -> bool:
         """verifier si un mur se trouve sur une case en avant du ninja, sinon, verifie la prochaine case"""
         tile = self.level.get_tile(position[0], position[1])
         return tile.tile_type == TileType.WALL
