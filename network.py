@@ -6,8 +6,6 @@ import threading
 from queue import Empty, Queue
 from typing import Dict
 
-from arcade.color import NEON_GREEN
-
 
 MAX_RX_QSIZE = 10
 MAX_TX_QSIZE = 10
