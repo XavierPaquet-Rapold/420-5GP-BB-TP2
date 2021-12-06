@@ -6,6 +6,8 @@ import threading
 from queue import Empty, Queue
 from typing import Dict
 
+from arcade.color import NEON_GREEN
+
 
 MAX_RX_QSIZE = 10
 MAX_TX_QSIZE = 10
@@ -42,7 +44,7 @@ class NetMessage:
 
     CMD = {'sessionID': 'SID', 'position': 'POS', 'level': 'LVL',
            'active': 'ACT', 'players': 'PLL', 'close': 'CLO', 'hit': 'HIT', 'queryPosition': 'QPO',
-           'endGame': 'END', 'playerDead': 'DED'}
+           'endGame': 'END'}
 
     DATA_POS_BYTES = 3
     DATA_ATK_BYTES = 2
@@ -54,6 +56,9 @@ class NetMessage:
     SRC_UNDEFINED = '98'
     SRC_SERVER = '99'
     DEST_ALL = '99'
+    DEST_UNDEFINED = '98'
+
+    VICTORY_TYPE = ('ninja', 'samourais')
 
     def __init__(self, command, source, destination, data: str) -> None:
         self.__command = command
@@ -240,7 +245,8 @@ class NetListener(threading.Thread):
         self.port = port
 
         # Dictionnaire sous le format {session_id: isUsed}
-        self.sessions_ids = {0: False, 1:False, 2:False, 3:False, 4:False, 5:False, 6:False}
+        self.sessions_ids = {0: False, 1: False, 2: False,
+                             3: False, 4: False, 5: False, 6: False}
 
         self.session_controllers = []
 
@@ -252,6 +258,10 @@ class NetListener(threading.Thread):
                               NetMessage.SRC_SERVER,
                               str(session_id).zfill(NetMessage.SRC_BYTES),
                               str(session_id)))
+    
+    @staticmethod
+    def __send_close(ctrl: NetSessionController) -> None:
+        ctrl.write(NetMessage(NetMessage.CMD['close'], NetMessage.SRC_SERVER, NetMessage.DEST_UNDEFINED, "No spot is left for another player"))
 
     def __get_key(self, val):
         for key, value in self.sessions_ids.items():
@@ -272,21 +282,27 @@ class NetListener(threading.Thread):
                     [self.server_socket], [], [], 0.1)
                 for _ in readable:
                     client_socket, ip_address = self.server_socket.accept()
+                    session_id = self.__get_key(False)
 
                     # On crée un contrôleur pour servir cette session client...
                     session_controller = NetSessionController(
                         client_socket)
+
+                    if len(self.session_controllers) > session_id and session_id >= 0:
+                        self.session_controllers[session_id] = session_controller
+                    else:
+                        self.session_controllers.append(session_controller)
+
                     session_controller.start()
 
-                    self.session_controllers.append(session_controller)
-
-                    # On cherche le premier session_id qui dont l'usage est False 
-                    session_id = self.__get_key(False)
+                    # On cherche le premier session_id qui dont l'usage est False
                     if session_id != -1:
                         self.__send_session_id(session_controller, session_id)
                         self.sessions_ids[session_id] = True
                         print(f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
-                    else: 
+                    else:
+                        self.__send_close(session_controller)
+                        session_controller.stop()
                         print("No spot is left for another player")
 
             except OSError:
@@ -298,9 +314,8 @@ class NetListener(threading.Thread):
         self.running = False
         print("Server closed")
 
-    def notify_session_stoped(self, session_id : int) -> None:
+    def notify_session_stoped(self, session_id: int) -> None:
         self.sessions_ids[session_id] = False
-        print(self.sessions_ids)
 
 
 class NetServer:
@@ -346,19 +361,24 @@ class NetServer:
     def receive_from_ctrl(ctrl: NetSessionController) -> list:
         messages = []
 
-        while True:
-            message = ctrl.read()
-            if message:
-                messages.append(message)
-            else:
-                break
+        if ctrl:
+            while True:
+                message = ctrl.read()
+                if message:
+                    messages.append(message)
+                else:
+                    break
 
         return messages
 
     def send(self, message: NetMessage) -> None:
-        """Envoie un message à tous les clients connectés."""
-        for ctrl in self.listener.session_controllers:
-            ctrl.write(message.copy())
+        """Envoie un message à/aux clients dans la destination."""
+        if message.destination != NetMessage.DEST_ALL:
+            ctrl_to_send = self.listener.ctrl(int(message.destination))
+            ctrl_to_send.write(message.copy())
+        else:
+            for ctrl in self.listener.session_controllers:
+                ctrl.write(message.copy())
 
     def send_to_all_but_one(self, message: NetMessage, session_id: str) -> None:
         """Envoie un message à tous les clients connectés sauf un (session_id)."""
@@ -374,7 +394,6 @@ class NetServer:
         ctrl = self.listener.session_controllers[int(session_id)]
         ctrl.stop()
         self.listener.notify_session_stoped(int(session_id))
-
 
     def start(self) -> None:
         self.listener.start()

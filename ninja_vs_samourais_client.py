@@ -16,6 +16,8 @@ def is_valid_ip(ip: str) -> bool:
 
     return True
 
+def close_window():
+    arcade.exit()
 
 def main() -> None:
     """Programme principal du client de Ninja VS Samouraïs."""
@@ -39,7 +41,6 @@ def main() -> None:
         if game_client:
             game_client.stop()
             arcade.exit()
-
 
 if __name__ == '__main__':
     main()

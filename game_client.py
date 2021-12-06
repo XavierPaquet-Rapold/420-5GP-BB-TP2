@@ -5,7 +5,6 @@ from network import NetClient
 from network import NetMessage
 from network import NetSettings
 
-
 class GameClient:
     """Côté client de la couche application de la communication réseau."""
 
@@ -41,16 +40,36 @@ class GameClient:
             elif message.is_active() or message.is_session_close():
                 msg_Active = message.data
                 player_id = int(message.source)
+                if message.source == NetMessage.SRC_SERVER:
+                    print(message.data)
+                    self.stop()
+                    self.__close_window()
+                    return
                 is_active = bool(int(msg_Active))
                 game.update_is_active(player_id, is_active)
             elif message.is_query_position():
                 player = game.get_current_player()
-                self.send_position(player.position)
+                self.send_position(player.position, player.get_facing())
             elif message.is_hit():
                 damage = int(message.data)
                 player = game.get_current_player()
-                player.hit(damage)
-                game.victime = player
+                if player.hit(damage) == 0:
+                    print('You are dead')
+                    self.stop()
+                    self.__close_window()
+            elif message.is_end_game():
+                if message.data == NetMessage.VICTORY_TYPE[0]:                    
+                    print('The ninja won!')  
+                    self.stop()
+                    self.__close_window()
+                elif message.data == NetMessage.VICTORY_TYPE[1]:
+                    print('The samourais won')
+                    self.stop()
+                    self.__close_window()
+
+    def __close_window(self):
+        from ninja_vs_samourais_client import close_window
+        close_window()
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""
@@ -68,7 +87,7 @@ class GameClient:
             NetMessage.CMD['active'], self.__session_id, NetMessage.DEST_ALL, '')
         self.__send(net_msg)
 
-    def send_position(self, position: tuple, facing:str) -> None:
+    def send_position(self, position: tuple, facing: str) -> None:
         """Envoie la position du joueur au serveur."""
         x_str = str(position[0]).zfill(NetMessage.DATA_POS_BYTES)
         y_str = str(position[1]).zfill(NetMessage.DATA_POS_BYTES)
@@ -78,7 +97,6 @@ class GameClient:
 
     def send_attack(self, damages: int, target: int) -> None:
         """Envoie les degats infliges par un joueur a la cible"""
-        print("JATTAQUE !!!! " + str(damages) + " le " + str(target))
         damages_str = str(damages).zfill(NetMessage.DATA_ATK_BYTES)
         target_str = str(target).zfill(NetMessage.DATA_TARGET_BYTES)
         net_msg = NetMessage(
@@ -87,7 +105,8 @@ class GameClient:
 
     def send_dead(self):
         """Envoie que le joueur n'a plus de points de vie"""
-        net_msg = NetMessage(NetMessage.CMD['playerDead', self.__session_id, NetMessage.DEST_ALL, ''])
+        net_msg = NetMessage(
+            NetMessage.CMD['playerDead', self.__session_id, NetMessage.DEST_ALL, ''])
         self.__send(net_msg)
 
     @staticmethod

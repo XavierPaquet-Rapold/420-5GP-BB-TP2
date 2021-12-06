@@ -91,6 +91,7 @@ class Level:
         return True
     
     def __validate_level_characters(self, level_file: str) -> bool:
+        """Valider que seulement les caracteres permis sont dans le fichier de niveau"""
         types_and_symbols = Tile.TYPES_AND_SYMBOLS
         allowed = set(types_and_symbols.keys())
         allowed.add('\n')
