@@ -56,6 +56,7 @@ class NetMessage:
     SRC_UNDEFINED = '98'
     SRC_SERVER = '99'
     DEST_ALL = '99'
+    DEST_UNDEFINED = '98'
 
     VICTORY_TYPE = ('ninja', 'samourais')
 
@@ -257,6 +258,10 @@ class NetListener(threading.Thread):
                               NetMessage.SRC_SERVER,
                               str(session_id).zfill(NetMessage.SRC_BYTES),
                               str(session_id)))
+    
+    @staticmethod
+    def __send_close(ctrl: NetSessionController) -> None:
+        ctrl.write(NetMessage(NetMessage.CMD['close'], NetMessage.SRC_SERVER, NetMessage.DEST_UNDEFINED, "No spot is left for another player"))
 
     def __get_key(self, val):
         for key, value in self.sessions_ids.items():
@@ -283,7 +288,7 @@ class NetListener(threading.Thread):
                     session_controller = NetSessionController(
                         client_socket)
 
-                    if len(self.session_controllers) >= session_id + 1:
+                    if len(self.session_controllers) > session_id and session_id >= 0:
                         self.session_controllers[session_id] = session_controller
                     else:
                         self.session_controllers.append(session_controller)
@@ -296,6 +301,8 @@ class NetListener(threading.Thread):
                         self.sessions_ids[session_id] = True
                         print(f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
                     else:
+                        self.__send_close(session_controller)
+                        session_controller.stop()
                         print("No spot is left for another player")
 
             except OSError:

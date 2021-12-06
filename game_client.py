@@ -40,6 +40,11 @@ class GameClient:
             elif message.is_active() or message.is_session_close():
                 msg_Active = message.data
                 player_id = int(message.source)
+                if message.source == NetMessage.SRC_SERVER:
+                    print(message.data)
+                    self.stop()
+                    self.__close_window()
+                    return
                 is_active = bool(int(msg_Active))
                 game.update_is_active(player_id, is_active)
             elif message.is_query_position():
@@ -52,22 +57,21 @@ class GameClient:
                     print('You are dead')
                     self.stop()
                     from ninja_vs_samourais_client import close_window
-                    close_window()
+                    self.__close_window()
             elif message.is_end_game():
                 if message.data == NetMessage.VICTORY_TYPE[0]:                    
                     print('The ninja won!')  
                     self.stop()
-                    from ninja_vs_samourais_client import close_window
-                    close_window()
+                    self.__close_window()
                 elif message.data == NetMessage.VICTORY_TYPE[1]:
                     print('The samourais won')
                     self.stop()
                     from ninja_vs_samourais_client import close_window
-                    close_window()
-                    
-            elif message.is_end_game():
-                print(message.data)
-                self.stop()
+                    self.__close_window()
+
+    def __close_window(self):
+        from ninja_vs_samourais_client import close_window
+        close_window()
 
     def __send(self, message: NetMessage) -> None:
         """Envoie un message au serveur."""

@@ -37,12 +37,13 @@ class GameServer:
                 self.send_new_player_active(message.source)
                 self.send_query_position(message.source)
             elif message.is_session_close():
-                if not message.source in self.__players:
+                if message.source in self.__players:
                     self.__players.remove(message.source)
                 net_msg = NetMessage(
                     message.command, message.source, NetMessage.DEST_ALL, message.data)
                 self.__send_to_all_but_source(net_msg)
-                self.__players.remove(message.source)
+                if message.source in self.__players:
+                    self.__players.remove(message.source)
                 self.__network_server.close_session_controller(message.source)
                 self.check_for_end_game(message.source)
             elif message.is_hit():
