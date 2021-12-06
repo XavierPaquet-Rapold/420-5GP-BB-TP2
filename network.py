@@ -244,9 +244,7 @@ class NetListener(threading.Thread):
         self.host = host
         self.port = port
 
-        # Dictionnaire sous le format {session_id: isUsed}
-        self.sessions_ids = {0: False, 1: False, 2: False,
-                             3: False, 4: False, 5: False, 6: False}
+        self.sessions_ids = [False] * 7
 
         self.session_controllers = []
 
@@ -263,10 +261,10 @@ class NetListener(threading.Thread):
     def __send_close(ctrl: NetSessionController) -> None:
         ctrl.write(NetMessage(NetMessage.CMD['close'], NetMessage.SRC_SERVER, NetMessage.DEST_UNDEFINED, "No spot is left for another player"))
 
-    def __get_key(self, val):
-        for key, value in self.sessions_ids.items():
-            if val == value:
-                return key
+    def __get_first_unused_index(self):
+        for index, isUsed in enumerate(self.sessions_ids):
+            if not isUsed:
+                return index
         return -1
 
     def ctrl(self, session_id: int) -> NetSessionController:
@@ -282,7 +280,7 @@ class NetListener(threading.Thread):
                     [self.server_socket], [], [], 0.1)
                 for _ in readable:
                     client_socket, ip_address = self.server_socket.accept()
-                    session_id = self.__get_key(False)
+                    session_id = self.__get_first_unused_index()
 
                     # On crée un contrôleur pour servir cette session client...
                     session_controller = NetSessionController(
