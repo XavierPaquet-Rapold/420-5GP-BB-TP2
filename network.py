@@ -372,7 +372,7 @@ class NetServer:
         return messages
 
     def send(self, message: NetMessage) -> None:
-        """Envoie un message à tous les clients connectés."""
+        """Envoie un message à/aux clients dans la destination."""
         if message.destination != NetMessage.DEST_ALL:
             ctrl_to_send = self.listener.ctrl(int(message.destination))
             ctrl_to_send.write(message.copy())

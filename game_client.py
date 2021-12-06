@@ -56,7 +56,6 @@ class GameClient:
                 if player.hit(damage) == 0:
                     print('You are dead')
                     self.stop()
-                    from ninja_vs_samourais_client import close_window
                     self.__close_window()
             elif message.is_end_game():
                 if message.data == NetMessage.VICTORY_TYPE[0]:                    
@@ -66,7 +65,6 @@ class GameClient:
                 elif message.data == NetMessage.VICTORY_TYPE[1]:
                     print('The samourais won')
                     self.stop()
-                    from ninja_vs_samourais_client import close_window
                     self.__close_window()
 
     def __close_window(self):

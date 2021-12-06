@@ -78,20 +78,20 @@ class GameServer:
         if destination == '00':
             self.__is_possible_to_win = True
 
-    def check_for_end_game(self, close_source: str):
+    def check_for_end_game(self, close_source: str) -> None:
         """Verifie si la partie est finie et envoie que la partie est finie aux clients dans le cas echeant"""
         if self.__is_possible_to_win:
             if len(self.__players) <= 0:
                 print('No players left in the game!')
-                pass
+                return
             if close_source == '00' and len(self.__players) > 0:
                 print('The samourais have won!')
                 self.send_end_game(NetMessage.VICTORY_TYPE[1])
-                pass
+                return
             if '00' in self.__players and len(self.__players) == 1:
                 print('The ninja won!')
                 self.send_end_game(NetMessage.VICTORY_TYPE[0])
-                pass
+                return
 
     def send_new_player_active(self, source) -> None:
         """Averti qu'un nouveau joueur s'est ajoute a la partie"""
