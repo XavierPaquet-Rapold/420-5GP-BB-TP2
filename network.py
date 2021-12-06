@@ -4,9 +4,6 @@ import sys
 import threading
 
 from queue import Empty, Queue
-from typing import Dict
-
-from arcade.color import NEON_GREEN
 
 
 MAX_RX_QSIZE = 10
@@ -96,9 +93,6 @@ class NetMessage:
 
     def is_end_game(self) -> bool:
         return self.__command == self.CMD['endGame']
-
-    def is_player_dead(self) -> bool:
-        return self.__command == self.CMD['playerDead']
 
     @property
     def command(self) -> str:
@@ -285,8 +279,7 @@ class NetListener(threading.Thread):
                     session_id = self.__get_key(False)
 
                     # On crée un contrôleur pour servir cette session client...
-                    session_controller = NetSessionController(
-                        client_socket)
+                    session_controller = NetSessionController(client_socket)
 
                     if len(self.session_controllers) > session_id and session_id >= 0:
                         self.session_controllers[session_id] = session_controller

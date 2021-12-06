@@ -17,7 +17,7 @@ HEALTH_BAR_HEIGHT = 10
 HEALTH_BAR_MULTIPLICATOR = 10
 HUD_WIDTH = 1000
 HUD_HEIGHT = 40
-
+COOLDOWN = 2.0
 SCREEN_TITLE = 'Ninja vs Samouraïs'
 
 MOVING_PACE = 5 / 60
@@ -327,7 +327,7 @@ class NinjaVSSamourais(arcade.Window):
                                   self.__ninja_in_viewing_region)
                     self.__possible_attack = False
                     self.__cooldown = th.Timer(
-                        2.0, self.__change_possible_attack, [True])
+                        COOLDOWN, self.__change_possible_attack, [True])
                     self.__cooldown.start()
                 if self.__moving_north:
                     dispatch_position = player.move_north(self.__game.level)

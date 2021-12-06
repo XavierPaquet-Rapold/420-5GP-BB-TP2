@@ -132,7 +132,7 @@ class Player:
 class Ninja(Player):
     """Représente les spécificités du personnage ninja (éventuellement)."""
 
-    __NINJA_DAMAGES = 2
+    __NINJA_DAMAGES = 1
 
     def __init__(self, x, y: int) -> None:
         super().__init__(x, y, self.__NINJA_DAMAGES)
@@ -147,7 +147,7 @@ class Samourai(Player):
               (255, 102, 153),  # samourai 5
               (153, 0, 255)]  # samourai 6
 
-    __SAMOURAI_DAMAGES = 1
+    __SAMOURAI_DAMAGES = 2
 
     __VIEWING_REGION_DELTAS = [
         [(0, -1), (0, -2), (-1, -3), (-1, -4)],
