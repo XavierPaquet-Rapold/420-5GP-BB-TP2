@@ -54,9 +54,9 @@ class GameClient:
                     self.stop()
             elif message.is_end_game():
                 if message.data == NetMessage.VICTORY_TYPE[0]:
-                    print('Le ninja a gagne !')
+                    print('The ninja won!')
                 elif message.data == NetMessage.VICTORY_TYPE[1]:
-                    print('Les samourais ont gagne')
+                    print('The samourais won!')
             elif message.is_end_game():
                 print(message.data)
                 self.stop()
@@ -87,7 +87,6 @@ class GameClient:
 
     def send_attack(self, damages: int, target: int) -> None:
         """Envoie les degats infliges par un joueur a la cible"""
-        print("JATTAQUE !!!! " + str(damages) + " le " + str(target))
         damages_str = str(damages).zfill(NetMessage.DATA_ATK_BYTES)
         target_str = str(target).zfill(NetMessage.DATA_TARGET_BYTES)
         net_msg = NetMessage(

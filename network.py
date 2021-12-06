@@ -294,8 +294,7 @@ class NetListener(threading.Thread):
                     if session_id != -1:
                         self.__send_session_id(session_controller, session_id)
                         self.sessions_ids[session_id] = True
-                        print(
-                            f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
+                        print(f"Client {session_id} connected from {ip_address[0]}:{ip_address[1]}")
                     else:
                         print("No spot is left for another player")
 
@@ -310,7 +309,6 @@ class NetListener(threading.Thread):
 
     def notify_session_stoped(self, session_id: int) -> None:
         self.sessions_ids[session_id] = False
-        print(self.sessions_ids)
 
 
 class NetServer:

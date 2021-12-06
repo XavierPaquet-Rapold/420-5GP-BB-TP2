@@ -1,11 +1,10 @@
 from enum import Enum
 from enum import auto
-from select import select
 
 from level import Level
 from players import Ninja, Player
 from players import Samourai
-from tile import Tile, TileType
+from tile import TileType
 
 
 class GameState(Enum):
@@ -23,6 +22,7 @@ class Game:
 
     def __init__(self) -> None:
         self.__level_number = 0
+        self.__number_of_samourais = 6
         self.__level = None
 
         self.player_id = -1
@@ -36,7 +36,7 @@ class Game:
         player_positions = self.level.get_starting_positions()
         self.__players.append(
             Ninja(player_positions[0]['x'], player_positions[0]['y']))
-        for i in range(6):
+        for i in range(self.__number_of_samourais):
             self.__players.append(
                 Samourai(player_positions[i + 1]['x'], player_positions[i + 1]['y']))
 
@@ -72,6 +72,7 @@ class Game:
         self.__create_ninja_and_samourais()
 
     def update_players_list(self, current_players: str) -> None:
+        """Modifie la liste de joueur a partir d'une liste d'id separee par des virgules"""
         if current_players:
             current_players = list(current_players.split(","))
             for id in current_players:
@@ -96,9 +97,10 @@ class Game:
     def check_for_wall(self, position: tuple) -> bool:
         """verifier si un mur se trouve sur une case en avant du ninja, sinon, verifie la prochaine case"""
         tile = self.level.get_tile(position[0], position[1])
-        return tile.tile_type == Tile.TYPES_AND_SYMBOLS.get('W').get('tileType')
+        return tile.tile_type == TileType.WALL
 
     def update_player_facing(self, player_id: int, facing: str) -> None:
+        """Met a jour la direction du joueur"""
         player = self.__players[player_id]
         if facing == 'n':
             player.face_north()

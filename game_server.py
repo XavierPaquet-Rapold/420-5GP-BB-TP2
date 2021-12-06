@@ -78,30 +78,34 @@ class GameServer:
             self.__is_possible_to_win = True
 
     def check_for_end_game(self, close_source: str):
+        """Verifie si la partie est finie et envoie que la partie est finie aux clients dans le cas echeant"""
         if self.__is_possible_to_win:
             if len(self.__players) <= 0:
-                print('Plus aucun joueur dans la partie !')
+                print('No players left in the game!')
                 pass
             if close_source == '00' and len(self.__players) > 0:
-                print('Les samourais ont gagnent !')
+                print('The samourais have won!')
                 self.send_end_game(NetMessage.VICTORY_TYPE[1])
                 pass
             if '00' in self.__players and len(self.__players) == 1:
-                print('Le ninja a gagne !')
+                print('The ninja won!')
                 self.send_end_game(NetMessage.VICTORY_TYPE[0])
                 pass
 
     def send_new_player_active(self, source) -> None:
+        """Averti qu'un nouveau joueur s'est ajoute a la partie"""
         net_msg = NetMessage(
             NetMessage.CMD['active'], source, NetMessage.DEST_ALL, '1')
         self.__send(net_msg)
 
     def send_query_position(self, source):
+        """Demande a tous les clients d'envoyer leur position"""
         net_msg = NetMessage(
             NetMessage.CMD['queryPosition'], source, NetMessage.DEST_ALL, '')
         self.__send(net_msg)
 
     def send_end_game(self, data: str):
+        """Envoie a tous les clients que la partie est terminee"""
         net_msg = NetMessage(
             NetMessage.CMD['endGame'], NetMessage.SRC_SERVER, NetMessage.DEST_ALL, data)
         self.__send(net_msg)

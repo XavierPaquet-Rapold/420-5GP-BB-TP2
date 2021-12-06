@@ -1,4 +1,3 @@
-from select import select
 import arcade
 
 from game import Game
@@ -214,23 +213,14 @@ class NinjaVSSamourais(arcade.Window):
 
     @staticmethod
     def __health_bar(game: Game) -> None:
+        """Dessine la barre de vie"""
         player = game.get_current_player()
         hp_max = player.hp_max
-        hp_current = player.hp_current
         arcade.draw_rectangle_filled(
             0, 0, HUD_WIDTH, HUD_HEIGHT, arcade.color.JAPANESE_VIOLET)
 
         arcade.draw_rectangle_outline(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y, hp_max * HEALTH_BAR_MULTIPLICATOR,
                                       HEALTH_BAR_HEIGHT, arcade.color.RED)
-        arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y,
-                                     hp_current * HEALTH_BAR_MULTIPLICATOR,
-                                     HEALTH_BAR_HEIGHT, arcade.color.RED)
-
-    @staticmethod
-    def update_health_bar(game: Game) -> None:
-
-        player = game.get_current_player()
-
         arcade.draw_rectangle_filled(HEALTH_BAR_POSITION_X, HEALTH_BAR_POSITION_Y,
                                      player.hp_current * HEALTH_BAR_MULTIPLICATOR,
                                      HEALTH_BAR_HEIGHT, arcade.color.RED)
