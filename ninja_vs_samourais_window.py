@@ -390,3 +390,4 @@ class NinjaVSSamourais(arcade.Window):
 
     def __change_possible_attack(self, possible: bool):
         self.__possible_attack = possible
+     

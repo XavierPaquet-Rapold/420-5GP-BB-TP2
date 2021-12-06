@@ -5,7 +5,6 @@ from network import NetClient
 from network import NetMessage
 from network import NetSettings
 
-
 class GameClient:
     """Côté client de la couche application de la communication réseau."""
 
@@ -52,11 +51,20 @@ class GameClient:
                 if player.hit(damage) == 0:
                     print('You are dead')
                     self.stop()
+                    from ninja_vs_samourais_client import close_window
+                    close_window()
             elif message.is_end_game():
-                if message.data == NetMessage.VICTORY_TYPE[0]:
-                    print('Le ninja a gagne !')
+                if message.data == NetMessage.VICTORY_TYPE[0]:                    
+                    print('Le ninja a gagne !')  
+                    self.stop()
+                    from ninja_vs_samourais_client import close_window
+                    close_window()
                 elif message.data == NetMessage.VICTORY_TYPE[1]:
                     print('Les samourais ont gagne')
+                    self.stop()
+                    from ninja_vs_samourais_client import close_window
+                    close_window()
+                    
             elif message.is_end_game():
                 print(message.data)
                 self.stop()
