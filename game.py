@@ -4,7 +4,7 @@ from enum import auto
 from level import Level
 from players import Ninja, Player
 from players import Samourai
-from tile import Tile, TileType
+from tile import TileType
 
 
 class GameState(Enum):
@@ -22,6 +22,7 @@ class Game:
 
     def __init__(self) -> None:
         self.__level_number = 0
+        self.__number_of_samourais = 6
         self.__level = None
 
         self.player_id = -1
@@ -35,7 +36,7 @@ class Game:
         player_positions = self.level.get_starting_positions()
         self.__players.append(
             Ninja(player_positions[0]['x'], player_positions[0]['y']))
-        for i in range(6):
+        for i in range(self.__number_of_samourais):
             self.__players.append(
                 Samourai(player_positions[i + 1]['x'], player_positions[i + 1]['y']))
 
@@ -71,6 +72,7 @@ class Game:
         self.__create_ninja_and_samourais()
 
     def update_players_list(self, current_players: str) -> None:
+        """Modifie la liste de joueur a partir d'une liste d'id separee par des virgules"""
         if current_players:
             current_players = list(current_players.split(","))
             for id in current_players:
@@ -85,22 +87,20 @@ class Game:
         player = self.__players[player_id]
         player.player_active = is_active
 
-    def check_for_ennemy(self, axe_verif: int, axe_compare: int, compare_id: int, compare_id_bis: int) -> int:
+    def check_for_ennemy(self, position: tuple) -> int:
         """verifier si un samourai se trouve sur une case en avant du ninja, sinon, verifie la prochaine case"""
-        id_samourai = -1
-
         for samourai in self.__players:
-            id_samourai += 1
-            if axe_verif == samourai.position[compare_id] and axe_compare == samourai.position[compare_id_bis] and samourai.player_active:
-                print("toucher samourai")
+            if tuple(position) == samourai.position and samourai.player_active:
+                id_samourai = self.get_all_players().index(samourai)
                 return id_samourai
 
-    def check_for_wall(self, x_ninja: int, y_ninja: int) -> bool:
+    def check_for_wall(self, position: tuple) -> bool:
         """verifier si un mur se trouve sur une case en avant du ninja, sinon, verifie la prochaine case"""
-        tile = self.level.get_tile(x_ninja, y_ninja)
-        return tile.tile_type == Tile.TYPES_AND_SYMBOLS.get('W').get('tileType')
+        tile = self.level.get_tile(position[0], position[1])
+        return tile.tile_type == TileType.WALL
 
     def update_player_facing(self, player_id: int, facing: str) -> None:
+        """Met a jour la direction du joueur"""
         player = self.__players[player_id]
         if facing == 'n':
             player.face_north()
